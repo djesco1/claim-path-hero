@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2 } from 'lucide-react';
+import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2, Share2, QrCode, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppLayout } from '@/components/layout';
@@ -17,12 +17,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
+import DocumentScanner from '@/components/scanner/DocumentScanner';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function ClaimDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: claim, isLoading } = useClaimDetail(id!);
+  const { data: claim, isLoading, refetch } = useClaimDetail(id!);
   const { data: timeline } = useClaimTimeline(id!);
   const { data: documents } = useClaimDocuments(id!);
   const addEvent = useAddTimelineEvent();
@@ -35,6 +40,7 @@ export default function ClaimDetail() {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [statusDialog, setStatusDialog] = useState(false);
   const [noteDialog, setNoteDialog] = useState(false);
+  const [shareDialog, setShareDialog] = useState(false);
   const [newStatus, setNewStatus] = useState<ClaimStatus>('draft');
   const [noteType, setNoteType] = useState<TimelineEventType>('sent');
   const [noteText, setNoteText] = useState('');
@@ -44,6 +50,7 @@ export default function ClaimDetail() {
   if (!claim) return <AppLayout><div className="p-8 text-center text-muted-foreground">Reclamación no encontrada</div></AppLayout>;
 
   const daysLeft = claim.deadline_date ? getDaysUntilDeadline(claim.deadline_date) : null;
+  const shareUrl = claim.share_token ? `${window.location.origin}/share/${claim.share_token}` : '';
 
   const handleDelete = async () => {
     await deleteClaim.mutateAsync(claim.id);
@@ -74,6 +81,22 @@ export default function ClaimDetail() {
     setNoteText('');
   };
 
+  const handleToggleShare = async () => {
+    const updates: any = { share_enabled: !claim.share_enabled };
+    if (!claim.share_token) {
+      updates.share_token = crypto.randomUUID();
+    }
+    const { error } = await supabase.from('claims').update(updates).eq('id', claim.id);
+    if (error) { toast.error('Error al compartir'); return; }
+    toast.success(updates.share_enabled ? 'Enlace de compartir activado' : 'Enlace desactivado');
+    refetch();
+  };
+
+  const handleCopyShareLink = () => {
+    navigator.clipboard.writeText(shareUrl);
+    toast.success('Enlace copiado');
+  };
+
   const getFileIcon = (name: string) => {
     if (name.match(/\.(pdf)$/i)) return FileText;
     if (name.match(/\.(jpg|jpeg|png|gif)$/i)) return Image;
@@ -81,7 +104,7 @@ export default function ClaimDetail() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout claimId={claim.id} claimTitle={claim.title}>
       <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-4">
@@ -98,6 +121,7 @@ export default function ClaimDetail() {
               </div>
             </div>
             <div className="flex gap-2 shrink-0">
+              <Button variant="outline" size="sm" onClick={() => setShareDialog(true)}><Share2 className="h-4 w-4 mr-2" />Compartir</Button>
               <Button variant="outline" size="sm" onClick={() => { setNewStatus(claim.status); setStatusDialog(true); }}>Actualizar estado</Button>
               <Button variant="ghost" size="icon" onClick={() => setDeleteConfirm(true)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
             </div>
@@ -121,7 +145,14 @@ export default function ClaimDetail() {
                   <Button size="sm" onClick={() => generateClaimPDF(claim)}><Download className="h-4 w-4 mr-2" />Descargar PDF</Button>
                   <Button size="sm" variant="outline" onClick={handleCopy}><Copy className="h-4 w-4 mr-2" />Copiar texto</Button>
                 </div>
-                <div className="rounded-xl border bg-card p-8 font-serif text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+                <div className="relative rounded-xl border bg-card p-8 font-serif text-sm leading-relaxed whitespace-pre-wrap text-foreground shadow-sm" style={{
+                  backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.03\'/%3E%3C/svg%3E")',
+                }}>
+                  {claim.status === 'draft' && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="text-6xl font-bold text-destructive/[0.04] rotate-[-30deg] select-none">BORRADOR</span>
+                    </div>
+                  )}
                   {claim.generated_document}
                 </div>
               </>
@@ -162,7 +193,7 @@ export default function ClaimDetail() {
             {claim.deadline_date && (
               <div className={cn(
                 'rounded-xl border p-4',
-                daysLeft !== null && daysLeft < 7 ? 'border-destructive bg-red-50' : daysLeft !== null && daysLeft < 30 ? 'border-warning bg-amber-50' : 'bg-muted'
+                daysLeft !== null && daysLeft < 7 ? 'border-destructive bg-destructive/5' : daysLeft !== null && daysLeft < 30 ? 'border-warning bg-warning/5' : 'bg-muted'
               )}>
                 <p className="font-medium text-foreground">Fecha límite recomendada: {formatDate(claim.deadline_date)}</p>
                 {daysLeft !== null && <p className="text-sm text-muted-foreground">{daysLeft > 0 ? `${daysLeft} días restantes` : 'Plazo vencido'}</p>}
@@ -191,6 +222,9 @@ export default function ClaimDetail() {
           </TabsContent>
 
           <TabsContent value="files" className="mt-6">
+            <div className="flex gap-2 mb-4">
+              <DocumentScanner claimId={claim.id} />
+            </div>
             <div
               className={cn('rounded-xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer', uploading ? 'border-primary bg-primary/5' : 'hover:border-primary')}
               onClick={() => fileInputRef.current?.click()}
@@ -229,16 +263,7 @@ export default function ClaimDetail() {
         </Tabs>
       </div>
 
-      <ConfirmDialog
-        open={deleteConfirm}
-        onOpenChange={setDeleteConfirm}
-        title="¿Eliminar esta reclamación?"
-        description="Esta acción es permanente. ¿Eliminar esta reclamación?"
-        confirmLabel="Eliminar"
-        destructive
-        onConfirm={handleDelete}
-        loading={deleteClaim.isPending}
-      />
+      <ConfirmDialog open={deleteConfirm} onOpenChange={setDeleteConfirm} title="¿Eliminar esta reclamación?" description="Esta acción es permanente." confirmLabel="Eliminar" destructive onConfirm={handleDelete} loading={deleteClaim.isPending} />
 
       <ConfirmDialog
         open={!!deleteDocId}
@@ -301,6 +326,34 @@ export default function ClaimDetail() {
               Guardar
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={shareDialog} onOpenChange={setShareDialog}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Compartir reclamación</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-foreground">Compartir enlace público</p>
+                <p className="text-xs text-muted-foreground">Solo se comparte el documento generado, no tu información personal</p>
+              </div>
+              <Switch checked={claim.share_enabled} onCheckedChange={handleToggleShare} />
+            </div>
+
+            {claim.share_enabled && claim.share_token && (
+              <>
+                <div className="flex gap-2">
+                  <Input value={shareUrl} readOnly className="text-xs" />
+                  <Button size="sm" variant="outline" onClick={handleCopyShareLink}><Copy className="h-4 w-4" /></Button>
+                </div>
+                <div className="flex justify-center p-4 rounded-lg bg-muted">
+                  <QRCodeSVG value={shareUrl} size={160} />
+                </div>
+              </>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </AppLayout>
