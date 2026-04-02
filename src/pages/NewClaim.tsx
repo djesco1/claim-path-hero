@@ -32,7 +32,7 @@ export default function NewClaim() {
   const [generating, setGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
 
-  const { register, handleSubmit, control, watch, formState: { errors } } = useForm<NewClaimStep2Input>({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<NewClaimStep2Input>({
     resolver: zodResolver(newClaimStep2Schema),
     defaultValues: { counterparty_type: 'company' },
   });
