@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2, Share2, QrCode, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2, Share2, QrCode, Link as LinkIcon, Mail } from 'lucide-react';
+import SuccessGauge from '@/components/claim/SuccessGauge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppLayout } from '@/components/layout';
@@ -112,7 +113,7 @@ export default function ClaimDetail() {
             <ArrowLeft className="h-4 w-4 mr-1" />Dashboard
           </Button>
           <div className="flex items-start justify-between gap-4">
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1">
               <h1 className="text-2xl font-bold text-foreground">{claim.title || 'Reclamación'}</h1>
               <div className="flex items-center gap-2 flex-wrap">
                 <ClaimTypeBadge type={claim.claim_type} />
@@ -120,6 +121,9 @@ export default function ClaimDetail() {
                 <span className="text-sm text-muted-foreground">Actualizado {formatRelativeDate(claim.updated_at)}</span>
               </div>
             </div>
+            {claim.success_probability != null && (
+              <SuccessGauge probability={claim.success_probability} size="sm" />
+            )}
             <div className="flex gap-2 shrink-0">
               <Button variant="outline" size="sm" onClick={() => setShareDialog(true)}><Share2 className="h-4 w-4 mr-2" />Compartir</Button>
               <Button variant="outline" size="sm" onClick={() => { setNewStatus(claim.status); setStatusDialog(true); }}>Actualizar estado</Button>
@@ -144,6 +148,17 @@ export default function ClaimDetail() {
                 <div className="flex gap-2 mb-4 flex-wrap">
                   <Button size="sm" onClick={() => generateClaimPDF(claim)}><Download className="h-4 w-4 mr-2" />Descargar PDF</Button>
                   <Button size="sm" variant="outline" onClick={handleCopy}><Copy className="h-4 w-4 mr-2" />Copiar texto</Button>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    const subject = encodeURIComponent(`Reclamación formal - ${claim.title}`);
+                    const body = encodeURIComponent(claim.generated_document || '');
+                    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+                    toast.success('Abriendo cliente de correo...');
+                    // Add timeline event
+                    addEvent.mutateAsync({ claimId: claim.id, eventType: 'sent', note: 'Reclamación enviada por email' });
+                    updateStatus.mutate({ claimId: claim.id, status: 'sent' });
+                  }}>
+                    <Mail className="h-4 w-4 mr-2" />Enviar por email
+                  </Button>
                 </div>
                 <div className="relative rounded-xl border bg-card p-8 font-serif text-sm leading-relaxed whitespace-pre-wrap text-foreground shadow-sm" style={{
                   backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.03\'/%3E%3C/svg%3E")',

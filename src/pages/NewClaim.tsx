@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, ArrowRight, Check, Shield, Loader2, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal } from 'lucide-react';
+import VoiceInput from '@/components/voice/VoiceInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,7 +32,7 @@ export default function NewClaim() {
   const [generating, setGenerating] = useState(false);
   const [genStep, setGenStep] = useState(0);
 
-  const { register, handleSubmit, control, watch, formState: { errors } } = useForm<NewClaimStep2Input>({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<NewClaimStep2Input>({
     resolver: zodResolver(newClaimStep2Schema),
     defaultValues: { counterparty_type: 'company' },
   });
@@ -146,7 +147,14 @@ export default function NewClaim() {
             <div className="grid lg:grid-cols-3 gap-6">
               <form onSubmit={handleSubmit(handleStep2Submit)} className="lg:col-span-2 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="situation">Describe tu situación con el mayor detalle posible</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="situation">Describe tu situación con el mayor detalle posible</Label>
+                    <VoiceInput onTranscript={(text) => {
+                      const current = watch('situation_description') || '';
+                      const newValue = current ? `${current} ${text}` : text;
+                      setValue('situation_description', newValue, { shouldDirty: true, shouldValidate: true });
+                    }} />
+                  </div>
                   <Textarea id="situation" {...register('situation_description')} className="min-h-[180px]" maxLength={5000} />
                   <p className={cn('text-xs', description.length < 100 ? 'text-destructive' : 'text-muted-foreground')}>
                     {description.length}/5000 caracteres {description.length < 100 && '(mínimo 100)'}

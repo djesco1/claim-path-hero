@@ -56,6 +56,8 @@ export interface Claim {
   reminder_sent: boolean;
   share_token: string | null;
   share_enabled: boolean;
+  success_probability: number | null;
+  counterparty_email: string | null;
   created_at: string;
   updated_at: string;
 }

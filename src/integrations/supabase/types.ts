@@ -120,6 +120,7 @@ export type Database = {
         Row: {
           amount_involved: number | null
           claim_type: string
+          counterparty_email: string | null
           counterparty_name: string
           counterparty_type: string
           created_at: string
@@ -134,6 +135,7 @@ export type Database = {
           share_token: string | null
           situation_description: string
           status: string
+          success_probability: number | null
           title: string
           updated_at: string
           user_id: string
@@ -141,6 +143,7 @@ export type Database = {
         Insert: {
           amount_involved?: number | null
           claim_type: string
+          counterparty_email?: string | null
           counterparty_name?: string
           counterparty_type?: string
           created_at?: string
@@ -155,6 +158,7 @@ export type Database = {
           share_token?: string | null
           situation_description?: string
           status?: string
+          success_probability?: number | null
           title?: string
           updated_at?: string
           user_id: string
@@ -162,6 +166,7 @@ export type Database = {
         Update: {
           amount_involved?: number | null
           claim_type?: string
+          counterparty_email?: string | null
           counterparty_name?: string
           counterparty_type?: string
           created_at?: string
@@ -176,6 +181,7 @@ export type Database = {
           share_token?: string | null
           situation_description?: string
           status?: string
+          success_probability?: number | null
           title?: string
           updated_at?: string
           user_id?: string
