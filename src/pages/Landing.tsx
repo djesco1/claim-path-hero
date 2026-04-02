@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X } from 'lucide-react';
+import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/layout';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { motion } from 'framer-motion';
 
 const steps = [
   { icon: MessageSquare, title: 'Describe tu situación', desc: 'Cuéntanos qué pasó con tus propias palabras. No necesitas conocer términos legales.' },
@@ -38,55 +39,92 @@ const faqs = [
   { q: '¿Qué tipos de reclamaciones soportan?', a: 'Actualmente: arrendamiento, laboral, seguros, entidades públicas, empresas de servicios, y otros casos generales.' },
 ];
 
+const floatingBadges = [
+  { text: 'Ley 820 Art. 29', color: 'bg-primary/10 text-primary', delay: 0.3, x: 'right-[-20px]', y: 'top-4' },
+  { text: 'Derecho sólido', color: 'bg-emerald-100 text-emerald-700', delay: 0.6, x: 'left-[-30px]', y: 'bottom-8' },
+  { text: 'PDF listo', color: 'bg-amber-100 text-amber-700', delay: 0.9, x: 'right-[-10px]', y: 'bottom-20' },
+];
+
 export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
 
-      {/* Hero */}
-      <section className="container py-20 lg:py-28">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-foreground">
-              Reclama lo que te corresponde.
-              <br />
-              <span className="text-primary">Sin abogados. Sin burocracia.</span>
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-lg">
-              Describe tu problema en palabras simples. En minutos tendrás el documento legal correcto, listo para enviar.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button size="lg" asChild><Link to="/register">Empezar gratis</Link></Button>
-              <Button size="lg" variant="outline" asChild><a href="#como-funciona">Ver cómo funciona</a></Button>
-            </div>
-            <div className="flex flex-wrap gap-6 pt-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Basado en legislación colombiana vigente</span>
-              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Documentos generados con IA legal</span>
-              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> 100% confidencial</span>
-            </div>
-          </div>
-          <div className="hidden lg:block">
-            <div className="rounded-2xl border bg-card p-8 shadow-lg rotate-1 hover:rotate-0 transition-transform">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Shield className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-semibold text-foreground">Documento Legal</p>
-                    <p className="text-xs text-muted-foreground">Generado por ClaimPath</p>
+      {/* Hero with animated gradient */}
+      <section className="relative overflow-hidden">
+        {/* Animated mesh gradient background */}
+        <div className="absolute inset-0 animate-gradient-shift bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 opacity-80" />
+        {/* Dot grid pattern */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, hsl(243 75% 59% / 0.07) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }} />
+
+        <div className="container py-20 lg:py-28 relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-6"
+            >
+              <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-foreground">
+                Reclama lo que te corresponde.
+                <br />
+                <span className="text-primary">Sin abogados. Sin burocracia.</span>
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-lg">
+                Describe tu problema en palabras simples. En minutos tendrás el documento legal correcto, listo para enviar.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button size="lg" asChild className="shadow-lg shadow-primary/20"><Link to="/register">Empezar gratis</Link></Button>
+                <Button size="lg" variant="outline" asChild><a href="#como-funciona">Ver cómo funciona</a></Button>
+              </div>
+              <div className="flex flex-wrap gap-6 pt-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Basado en legislación colombiana vigente</span>
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Documentos generados con IA legal</span>
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> 100% confidencial</span>
+              </div>
+            </motion.div>
+            <div className="hidden lg:block relative">
+              {/* Floating badges */}
+              {floatingBadges.map((badge, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: badge.delay, duration: 0.5, type: 'spring' }}
+                  className={`absolute ${badge.x} ${badge.y} z-10 rounded-lg px-3 py-1.5 text-xs font-medium shadow-sm ${badge.color}`}
+                >
+                  {badge.text}
+                </motion.span>
+              ))}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="rounded-2xl border bg-card p-8 shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="font-semibold text-foreground">Documento Legal</p>
+                      <p className="text-xs text-muted-foreground">Generado por ClaimPath</p>
+                    </div>
+                  </div>
+                  <div className="border-t pt-4 space-y-2">
+                    <div className="h-3 rounded bg-muted w-full animate-pulse" />
+                    <div className="h-3 rounded bg-muted w-5/6" />
+                    <div className="h-3 rounded bg-muted w-4/6" />
+                    <div className="h-3 rounded bg-muted w-full" />
+                    <div className="h-3 rounded bg-muted w-3/4" />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <span className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary font-medium">Ley 820 Art. 29</span>
+                    <span className="rounded-md bg-emerald-100 px-2 py-1 text-xs text-emerald-700 font-medium">Derecho sólido</span>
                   </div>
                 </div>
-                <div className="border-t pt-4 space-y-2">
-                  <div className="h-3 rounded bg-muted w-full" />
-                  <div className="h-3 rounded bg-muted w-5/6" />
-                  <div className="h-3 rounded bg-muted w-4/6" />
-                  <div className="h-3 rounded bg-muted w-full" />
-                  <div className="h-3 rounded bg-muted w-3/4" />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <span className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary font-medium">Ley 820 Art. 29</span>
-                  <span className="rounded-md bg-emerald-100 px-2 py-1 text-xs text-emerald-700 font-medium">Derecho sólido</span>
-                </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -98,14 +136,21 @@ export default function Landing() {
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Tan simple como tres pasos</h2>
           <div className="grid md:grid-cols-3 gap-8 relative">
             {steps.map((step, i) => (
-              <div key={i} className="relative text-center space-y-4">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="relative text-center space-y-4"
+              >
                 <div className="mx-auto rounded-2xl bg-primary/10 p-4 w-fit">
                   <span className="absolute -top-2 -left-2 md:static md:mb-2 rounded-full bg-primary text-primary-foreground w-8 h-8 flex items-center justify-center text-sm font-bold">{i + 1}</span>
                   <step.icon className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
                 <p className="text-sm text-muted-foreground max-w-xs mx-auto">{step.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -116,11 +161,18 @@ export default function Landing() {
         <h2 className="text-3xl font-bold text-center mb-12 text-foreground">¿Cuál es tu situación?</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {claimTypesData.map((ct, i) => (
-            <div key={i} className="rounded-xl border bg-card p-6 hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group">
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="rounded-xl border bg-card p-6 hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group"
+            >
               <ct.icon className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
               <h3 className="font-semibold text-foreground mb-2">{ct.title}</h3>
               <p className="text-sm text-muted-foreground">{ct.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -131,7 +183,14 @@ export default function Landing() {
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Personas que recuperaron lo suyo</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
-              <div key={i} className="rounded-xl border bg-background p-6 space-y-4">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="rounded-xl border bg-background p-6 space-y-4"
+              >
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold text-primary-foreground ${t.color}`}>{t.initials}</div>
                   <div>
@@ -145,7 +204,7 @@ export default function Landing() {
                     <Star key={si} className={`h-4 w-4 ${si < t.stars ? 'text-warning fill-warning' : 'text-muted'}`} />
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
