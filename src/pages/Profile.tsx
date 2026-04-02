@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +14,29 @@ import { countries } from '@/constants';
 import { getInitials, getInitialsColor, cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+
+function AppearanceSection() {
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <div className="rounded-xl border bg-card p-6">
+      <h3 className="font-semibold text-foreground mb-4">Apariencia</h3>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {isDark ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}
+          <div>
+            <p className="text-sm font-medium text-foreground">{isDark ? 'Modo oscuro' : 'Modo claro'}</p>
+            <p className="text-xs text-muted-foreground">Cambia la apariencia de la aplicación</p>
+          </div>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => setTheme(isDark ? 'light' : 'dark')}>
+          {isDark ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+          {isDark ? 'Modo claro' : 'Modo oscuro'}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default function Profile() {
   const { profile, updateProfile } = useAuth();
@@ -91,6 +115,9 @@ export default function Profile() {
             </Button>
           </form>
         </div>
+
+        {/* Appearance */}
+        <AppearanceSection />
 
         {/* Security */}
         <div className="rounded-xl border bg-card p-6">
