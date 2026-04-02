@@ -113,7 +113,7 @@ export default function ClaimDetail() {
             <ArrowLeft className="h-4 w-4 mr-1" />Dashboard
           </Button>
           <div className="flex items-start justify-between gap-4">
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1">
               <h1 className="text-2xl font-bold text-foreground">{claim.title || 'Reclamación'}</h1>
               <div className="flex items-center gap-2 flex-wrap">
                 <ClaimTypeBadge type={claim.claim_type} />
@@ -121,6 +121,9 @@ export default function ClaimDetail() {
                 <span className="text-sm text-muted-foreground">Actualizado {formatRelativeDate(claim.updated_at)}</span>
               </div>
             </div>
+            {claim.success_probability != null && (
+              <SuccessGauge probability={claim.success_probability} size="sm" />
+            )}
             <div className="flex gap-2 shrink-0">
               <Button variant="outline" size="sm" onClick={() => setShareDialog(true)}><Share2 className="h-4 w-4 mr-2" />Compartir</Button>
               <Button variant="outline" size="sm" onClick={() => { setNewStatus(claim.status); setStatusDialog(true); }}>Actualizar estado</Button>
