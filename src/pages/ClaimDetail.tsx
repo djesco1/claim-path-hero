@@ -148,6 +148,17 @@ export default function ClaimDetail() {
                 <div className="flex gap-2 mb-4 flex-wrap">
                   <Button size="sm" onClick={() => generateClaimPDF(claim)}><Download className="h-4 w-4 mr-2" />Descargar PDF</Button>
                   <Button size="sm" variant="outline" onClick={handleCopy}><Copy className="h-4 w-4 mr-2" />Copiar texto</Button>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    const subject = encodeURIComponent(`Reclamación formal - ${claim.title}`);
+                    const body = encodeURIComponent(claim.generated_document || '');
+                    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+                    toast.success('Abriendo cliente de correo...');
+                    // Add timeline event
+                    addEvent.mutateAsync({ claimId: claim.id, eventType: 'sent', note: 'Reclamación enviada por email' });
+                    updateStatus.mutate({ claimId: claim.id, status: 'sent' });
+                  }}>
+                    <Mail className="h-4 w-4 mr-2" />Enviar por email
+                  </Button>
                 </div>
                 <div className="relative rounded-xl border bg-card p-8 font-serif text-sm leading-relaxed whitespace-pre-wrap text-foreground shadow-sm" style={{
                   backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.03\'/%3E%3C/svg%3E")',
