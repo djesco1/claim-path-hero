@@ -68,22 +68,6 @@ export function PublicNavbar() {
   );
 }
 
-export function ThemeToggle({ collapsed }: { collapsed?: boolean }) {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === 'dark';
-  return (
-    <Button
-      variant="ghost"
-      size={collapsed ? 'icon' : 'sm'}
-      className={cn("text-muted-foreground", !collapsed && "w-full justify-start gap-3")}
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-      {!collapsed && (isDark ? 'Modo claro' : 'Modo oscuro')}
-    </Button>
-  );
-}
-
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();

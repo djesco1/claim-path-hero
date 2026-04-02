@@ -93,6 +93,9 @@ export default function Profile() {
           </form>
         </div>
 
+        {/* Appearance */}
+        <AppearanceSection />
+
         {/* Security */}
         <div className="rounded-xl border bg-card p-6">
           <h3 className="font-semibold text-foreground mb-4">Seguridad</h3>
