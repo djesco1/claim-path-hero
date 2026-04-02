@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3 } from 'lucide-react';
+import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { cn, getInitials, getInitialsColor } from '@/lib/utils';
@@ -67,6 +68,22 @@ export function PublicNavbar() {
   );
 }
 
+export function ThemeToggle({ collapsed }: { collapsed?: boolean }) {
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <Button
+      variant="ghost"
+      size={collapsed ? 'icon' : 'sm'}
+      className={cn("text-muted-foreground", !collapsed && "w-full justify-start gap-3")}
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+    >
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {!collapsed && (isDark ? 'Modo claro' : 'Modo oscuro')}
+    </Button>
+  );
+}
+
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -119,6 +136,7 @@ export function AppSidebar() {
             </div>
           </div>
         )}
+        <ThemeToggle collapsed={collapsed} />
         <Button variant="ghost" size="sm" className="w-full justify-start gap-3 text-muted-foreground" onClick={handleSignOut}>
           <LogOut className="h-4 w-4" />
           {!collapsed && 'Cerrar sesión'}
