@@ -54,6 +54,8 @@ export interface Claim {
   legal_rights: LegalRight[] | null;
   deadline_date: string | null;
   reminder_sent: boolean;
+  share_token: string | null;
+  share_enabled: boolean;
   created_at: string;
   updated_at: string;
 }

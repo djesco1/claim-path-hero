@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { useEffect, useState as useS, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const ACCENT_COLORS: Record<ClaimType, string> = {
   landlord_deposit: 'bg-blue-500',
