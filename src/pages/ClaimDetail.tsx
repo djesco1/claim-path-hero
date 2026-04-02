@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2, Share2, QrCode, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Download, Copy, RefreshCw, Trash2, Plus, Upload, FileText, Image, File, X, Loader2, Share2, QrCode, Link as LinkIcon, Mail } from 'lucide-react';
+import SuccessGauge from '@/components/claim/SuccessGauge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppLayout } from '@/components/layout';
