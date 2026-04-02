@@ -120,7 +120,7 @@ export function AppSidebar() {
             </div>
           </div>
         )}
-        <ThemeToggle collapsed={collapsed} />
+        
         <Button variant="ghost" size="sm" className="w-full justify-start gap-3 text-muted-foreground" onClick={handleSignOut}>
           <LogOut className="h-4 w-4" />
           {!collapsed && 'Cerrar sesión'}
