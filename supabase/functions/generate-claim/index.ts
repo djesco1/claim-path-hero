@@ -139,6 +139,7 @@ Genera el documento completo con referencias legales reales colombianas.`;
       instructions: parsed.instructions,
       legal_rights: parsed.legal_rights,
       deadline_date: deadline,
+      success_probability: Math.min(100, Math.max(0, parsed.success_probability || 50)),
     }).select("id").single();
 
     if (insertError) throw insertError;
