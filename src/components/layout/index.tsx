@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut } from 'lucide-react';
+import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { cn, getInitials, getInitialsColor } from '@/lib/utils';
+import LegalAssistant from '@/components/assistant/LegalAssistant';
 
 const publicLinks = [
   { href: '#como-funciona', label: 'Cómo funciona' },
@@ -15,6 +16,7 @@ const publicLinks = [
 const privateLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/claims/new', label: 'Nueva Reclamación', icon: PlusCircle },
+  { href: '/analytics', label: 'Estadísticas', icon: BarChart3 },
   { href: '/profile', label: 'Perfil', icon: User },
   { href: '/pricing', label: 'Precios', icon: Tag },
 ];
@@ -134,8 +136,8 @@ export function BottomNav() {
   const items = [
     { href: '/dashboard', icon: Home, label: 'Inicio' },
     { href: '/claims/new', icon: PlusCircle, label: 'Nueva' },
+    { href: '/analytics', icon: BarChart3, label: 'Stats' },
     { href: '/profile', icon: User, label: 'Perfil' },
-    { href: '/pricing', icon: Tag, label: 'Planes' },
   ];
 
   return (
@@ -170,12 +172,13 @@ export function PageWrapper({ children, className }: { children: React.ReactNode
   );
 }
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
+export function AppLayout({ children, claimId, claimTitle }: { children: React.ReactNode; claimId?: string; claimTitle?: string }) {
   return (
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <PageWrapper>{children}</PageWrapper>
       <BottomNav />
+      <LegalAssistant claimId={claimId} claimTitle={claimTitle} />
     </div>
   );
 }

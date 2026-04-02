@@ -14,13 +14,312 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assistant_conversations: {
+        Row: {
+          claim_id: string | null
+          created_at: string
+          id: string
+          messages: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claim_id?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claim_id?: string | null
+          created_at?: string
+          id?: string
+          messages?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_conversations_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claim_embeddings: {
+        Row: {
+          chunk_text: string
+          claim_id: string | null
+          created_at: string
+          embedding: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chunk_text: string
+          claim_id?: string | null
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chunk_text?: string
+          claim_id?: string | null
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_embeddings_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claim_timeline: {
+        Row: {
+          claim_id: string
+          created_at: string
+          event_type: string
+          id: string
+          note: string | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          note?: string | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_timeline_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claims: {
+        Row: {
+          amount_involved: number | null
+          claim_type: string
+          counterparty_name: string
+          counterparty_type: string
+          created_at: string
+          deadline_date: string | null
+          generated_document: string | null
+          id: string
+          incident_date: string | null
+          instructions: string | null
+          legal_rights: Json | null
+          reminder_sent: boolean
+          share_enabled: boolean
+          share_token: string | null
+          situation_description: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_involved?: number | null
+          claim_type: string
+          counterparty_name?: string
+          counterparty_type?: string
+          created_at?: string
+          deadline_date?: string | null
+          generated_document?: string | null
+          id?: string
+          incident_date?: string | null
+          instructions?: string | null
+          legal_rights?: Json | null
+          reminder_sent?: boolean
+          share_enabled?: boolean
+          share_token?: string | null
+          situation_description?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_involved?: number | null
+          claim_type?: string
+          counterparty_name?: string
+          counterparty_type?: string
+          created_at?: string
+          deadline_date?: string | null
+          generated_document?: string | null
+          id?: string
+          incident_date?: string | null
+          instructions?: string | null
+          legal_rights?: Json | null
+          reminder_sent?: boolean
+          share_enabled?: boolean
+          share_token?: string | null
+          situation_description?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          claim_id: string
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_knowledge: {
+        Row: {
+          claim_type: string | null
+          content: string
+          content_type: string
+          created_at: string
+          embedding: string | null
+          id: string
+          source: string
+        }
+        Insert: {
+          claim_type?: string | null
+          content: string
+          content_type: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source: string
+        }
+        Update: {
+          claim_type?: string | null
+          content?: string
+          content_type?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          claims_used: number
+          country: string
+          created_at: string
+          full_name: string
+          id: string
+          ocr_extractions_today: number
+          ocr_last_reset: string
+          plan: string
+          updated_at: string
+        }
+        Insert: {
+          claims_used?: number
+          country?: string
+          created_at?: string
+          full_name?: string
+          id: string
+          ocr_extractions_today?: number
+          ocr_last_reset?: string
+          plan?: string
+          updated_at?: string
+        }
+        Update: {
+          claims_used?: number
+          country?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          ocr_extractions_today?: number
+          ocr_last_reset?: string
+          plan?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrement_claims_used: { Args: { uid: string }; Returns: undefined }
+      match_claim_embeddings: {
+        Args: {
+          match_count?: number
+          p_claim_id: string
+          query_embedding: string
+        }
+        Returns: {
+          chunk_text: string
+          id: string
+          similarity: number
+        }[]
+      }
+      match_legal_knowledge: {
+        Args: {
+          filter_claim_type?: string
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          claim_type: string
+          content: string
+          content_type: string
+          id: string
+          similarity: number
+          source: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
