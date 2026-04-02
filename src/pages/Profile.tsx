@@ -48,7 +48,13 @@ export default function Profile() {
 
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
-  if (!profile) return null;
+  if (!profile) return (
+    <AppLayout>
+      <div className="p-6 lg:p-8 max-w-2xl mx-auto flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    </AppLayout>
+  );
 
   return (
     <AppLayout>
