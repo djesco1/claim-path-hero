@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, ArrowRight, Check, Shield, Loader2, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal } from 'lucide-react';
+import VoiceInput from '@/components/voice/VoiceInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
