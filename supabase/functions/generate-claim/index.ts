@@ -67,8 +67,17 @@ Responde SIEMPRE en formato JSON con esta estructura exacta:
     }
   ],
   "instructions": "Instrucciones paso a paso para enviar la reclamación, incluyendo instituciones colombianas relevantes",
-  "deadline_suggestion": "YYYY-MM-DD"
-}`;
+  "deadline_suggestion": "YYYY-MM-DD",
+  "success_probability": 75
+}
+
+Para success_probability, evalúa del 0 al 100 qué tan probable es que esta reclamación tenga éxito considerando:
+- Solidez de los fundamentos legales (¿hay leyes claras que protejan al reclamante?)
+- Claridad de los hechos descritos (¿son específicos y verificables?)
+- Monto involucrado vs proporcionalidad
+- Tipo de contraparte (empresas grandes suelen tener más recursos)
+- Precedentes jurisprudenciales típicos en Colombia para este tipo de caso
+Sé realista y honesto en la evaluación.`;
 
     const userPrompt = `Genera un documento legal de reclamación con estos datos:
 
