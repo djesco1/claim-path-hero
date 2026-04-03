@@ -19,6 +19,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <AppRouter />
+            <CookieConsent />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

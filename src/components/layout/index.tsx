@@ -139,6 +139,7 @@ export function BottomNav() {
   const items = [
     { href: '/dashboard', icon: Home, label: 'Inicio' },
     { href: '/claims/new', icon: PlusCircle, label: 'Nueva' },
+    { href: '/inteligencia', icon: Sparkles, label: 'IA' },
     { href: '/analytics', icon: BarChart3, label: 'Stats' },
     { href: '/profile', icon: User, label: 'Perfil' },
   ];
