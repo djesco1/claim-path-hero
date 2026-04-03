@@ -155,6 +155,9 @@ export default function Landing() {
                 <Button size="lg" variant="outline" asChild className="rounded-xl px-6 py-3.5 border-[1.5px] hover:border-[#818CF8] hover:shadow-sm transition-all">
                   <a href="#como-funciona">Ver cómo funciona</a>
                 </Button>
+                <Button size="lg" variant="ghost" asChild className="rounded-xl px-6 py-3.5 text-muted-foreground hover:text-primary transition-all">
+                  <Link to="/diagnostico">¿No sabes si tienes caso?</Link>
+                </Button>
               </motion.div>
 
               <motion.div
