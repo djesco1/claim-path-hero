@@ -65,7 +65,7 @@ export default function EmailSendTab({ claim }: { claim: Claim }) {
   });
 
   // Load email logs
-  useState(() => {
+  useEffect(() => {
     (async () => {
       const { data } = await supabase
         .from('email_logs')
@@ -75,7 +75,7 @@ export default function EmailSendTab({ claim }: { claim: Claim }) {
       setEmailLogs((data as EmailLog[]) || []);
       setLoadingLogs(false);
     })();
-  });
+  }, [claim.id]);
 
   const handleSend = async (data: EmailFormData) => {
     setConfirmOpen(false);
