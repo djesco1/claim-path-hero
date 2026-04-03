@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3, Moon, Sun } from 'lucide-react';
+import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
