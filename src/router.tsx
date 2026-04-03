@@ -15,6 +15,8 @@ import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
 import Analytics from '@/pages/Analytics';
 import SharedClaim from '@/pages/SharedClaim';
+import Diagnostico from '@/pages/Diagnostico';
+import Inteligencia from '@/pages/Inteligencia';
 import NotFound from '@/pages/NotFound';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
