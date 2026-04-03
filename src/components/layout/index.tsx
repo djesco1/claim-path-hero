@@ -182,7 +182,7 @@ export function AppLayout({ children, claimId, claimTitle }: { children: React.R
       <AppSidebar />
       <PageWrapper>{children}</PageWrapper>
       <BottomNav />
-      <LegalAssistant claimId={claimId} claimTitle={claimTitle} />
+      
     </div>
   );
 }
