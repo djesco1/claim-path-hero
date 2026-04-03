@@ -7,6 +7,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { ErrorBoundary, OfflineBanner } from '@/components/shared';
 import { queryClient } from '@/lib/queryClient';
 import AppRouter from '@/router';
+import CookieConsent from '@/components/CookieConsent';
 
 const App = () => (
   <ErrorBoundary>
