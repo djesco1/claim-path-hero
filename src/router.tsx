@@ -39,6 +39,7 @@ function AnimatedRoutes() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/share/:token" element={<SharedClaim />} />
+          <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/claims/new" element={<ProtectedRoute><NewClaim /></ProtectedRoute>} />
           <Route path="/claims/:id" element={<ProtectedRoute><ClaimDetail /></ProtectedRoute>} />
