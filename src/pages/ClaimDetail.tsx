@@ -139,6 +139,7 @@ export default function ClaimDetail() {
             <TabsTrigger value="document">Documento</TabsTrigger>
             <TabsTrigger value="rights">Derechos</TabsTrigger>
             <TabsTrigger value="instructions">Instrucciones</TabsTrigger>
+            <TabsTrigger value="send">Enviar</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="files">Archivos</TabsTrigger>
           </TabsList>
