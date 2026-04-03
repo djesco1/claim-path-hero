@@ -218,6 +218,11 @@ export default function ClaimDetail() {
             )}
           </TabsContent>
 
+          <TabsContent value="send" className="mt-6">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Enviar a la contraparte</h3>
+            <EmailSendTab claim={claim} />
+          </TabsContent>
+
           <TabsContent value="timeline" className="mt-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-foreground">Historial</h3>
