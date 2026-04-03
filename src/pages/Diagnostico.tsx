@@ -239,100 +239,97 @@ export default function Diagnostico() {
               <AnswerSummary answers={answers} />
 
               <AnimatePresence mode="wait">
-                {/* Q1: Situation type */}
-                {step === 0 && (
-                  <motion.div key="q0" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="mt-6 space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">¿Qué tipo de problema tienes?</h2>
-                    <p className="text-sm text-muted-foreground">Selecciona el que más se acerca a tu situación</p>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {situationTypes.map(st => {
-                        const selected = answers[0]?.value === st.value;
-                        return (
-                          <button key={st.value} onClick={() => setAnswer(st)} className={cn(
-                            'rounded-xl border p-4 text-left transition-all hover:shadow-md hover:border-primary/50',
-                            selected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'bg-card'
-                          )}>
-                            <div className="flex items-start justify-between">
-                              <span className="text-2xl">{st.emoji}</span>
-                              {selected && <Check className="h-4 w-4 text-primary" />}
-                            </div>
-                            <h3 className="font-semibold text-foreground mt-2 text-sm">{st.label}</h3>
-                            <p className="text-xs text-muted-foreground">{st.desc}</p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
+                <motion.div key={`step-${step}`} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.25 }} className="mt-6 space-y-4">
+                  {step === 0 && (
+                    <>
+                      <h2 className="text-xl font-bold text-foreground">¿Qué tipo de problema tienes?</h2>
+                      <p className="text-sm text-muted-foreground">Selecciona el que más se acerca a tu situación</p>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {situationTypes.map(st => {
+                          const selected = answers[0]?.value === st.value;
+                          return (
+                            <button key={st.value} onClick={() => setAnswer(st)} className={cn(
+                              'rounded-xl border p-4 text-left transition-all hover:shadow-md hover:border-primary/50',
+                              selected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'bg-card'
+                            )}>
+                              <div className="flex items-start justify-between">
+                                <span className="text-2xl">{st.emoji}</span>
+                                {selected && <Check className="h-4 w-4 text-primary" />}
+                              </div>
+                              <h3 className="font-semibold text-foreground mt-2 text-sm">{st.label}</h3>
+                              <p className="text-xs text-muted-foreground">{st.desc}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
 
-                {/* Q2: Time */}
-                {step === 1 && (
-                  <motion.div key="q1" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="mt-6 space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">¿Cuánto tiempo lleva este problema sin resolverse?</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {timeOptions.map(opt => (
-                        <button key={opt} onClick={() => setAnswer(opt)} className={cn(
-                          'rounded-full border px-4 py-2.5 text-sm font-medium transition-all',
-                          answers[1] === opt ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:border-primary/50'
-                        )}>{opt}</button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Q3: Evidence */}
-                {step === 2 && (
-                  <motion.div key="q2" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="mt-6 space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">¿Qué evidencia tienes de la situación?</h2>
-                    <p className="text-sm text-muted-foreground">Selecciona todo lo que aplique</p>
-                    <div className="flex flex-wrap gap-2">
-                      {evidenceOptions.map(opt => {
-                        const selected = (answers[2] || []).includes(opt);
-                        return (
-                          <button key={opt} onClick={() => {
-                            const current = answers[2] || [];
-                            setAnswer(selected ? current.filter((v: string) => v !== opt) : [...current, opt]);
-                          }} className={cn(
+                  {step === 1 && (
+                    <>
+                      <h2 className="text-xl font-bold text-foreground">¿Cuánto tiempo lleva este problema sin resolverse?</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {timeOptions.map(opt => (
+                          <button key={opt} onClick={() => setAnswer(opt)} className={cn(
                             'rounded-full border px-4 py-2.5 text-sm font-medium transition-all',
-                            selected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:border-primary/50'
-                          )}>
-                            {selected && <Check className="h-3 w-3 inline mr-1" />}{opt}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
+                            answers[1] === opt ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:border-primary/50'
+                          )}>{opt}</button>
+                        ))}
+                      </div>
+                    </>
+                  )}
 
-                {/* Q4: Previous attempts */}
-                {step === 3 && (
-                  <motion.div key="q3" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="mt-6 space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">¿Has intentado resolver esto antes?</h2>
-                    <div className="space-y-2">
-                      {attemptOptions.map(opt => (
-                        <button key={opt} onClick={() => setAnswer(opt)} className={cn(
-                          'w-full rounded-xl border p-4 text-left text-sm transition-all',
-                          answers[3] === opt ? 'bg-primary/5 border-primary ring-2 ring-primary/20 font-medium' : 'bg-card hover:border-primary/50'
-                        )}>{opt}</button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+                  {step === 2 && (
+                    <>
+                      <h2 className="text-xl font-bold text-foreground">¿Qué evidencia tienes de la situación?</h2>
+                      <p className="text-sm text-muted-foreground">Selecciona todo lo que aplique</p>
+                      <div className="flex flex-wrap gap-2">
+                        {evidenceOptions.map(opt => {
+                          const selected = (answers[2] || []).includes(opt);
+                          return (
+                            <button key={opt} onClick={() => {
+                              const current = answers[2] || [];
+                              setAnswer(selected ? current.filter((v: string) => v !== opt) : [...current, opt]);
+                            }} className={cn(
+                              'rounded-full border px-4 py-2.5 text-sm font-medium transition-all',
+                              selected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:border-primary/50'
+                            )}>
+                              {selected && <Check className="h-3 w-3 inline mr-1" />}{opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
 
-                {/* Q5: Impact */}
-                {step === 4 && (
-                  <motion.div key="q4" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="mt-6 space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">¿Qué tanto te afecta esta situación?</h2>
-                    <div className="space-y-2">
-                      {impactOptions.map(opt => (
-                        <button key={opt} onClick={() => setAnswer(opt)} className={cn(
-                          'w-full rounded-xl border p-4 text-left text-sm transition-all',
-                          answers[4] === opt ? 'bg-primary/5 border-primary ring-2 ring-primary/20 font-medium' : 'bg-card hover:border-primary/50'
-                        )}>{opt}</button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+                  {step === 3 && (
+                    <>
+                      <h2 className="text-xl font-bold text-foreground">¿Has intentado resolver esto antes?</h2>
+                      <div className="space-y-2">
+                        {attemptOptions.map(opt => (
+                          <button key={opt} onClick={() => setAnswer(opt)} className={cn(
+                            'w-full rounded-xl border p-4 text-left text-sm transition-all',
+                            answers[3] === opt ? 'bg-primary/5 border-primary ring-2 ring-primary/20 font-medium' : 'bg-card hover:border-primary/50'
+                          )}>{opt}</button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {step === 4 && (
+                    <>
+                      <h2 className="text-xl font-bold text-foreground">¿Qué tanto te afecta esta situación?</h2>
+                      <div className="space-y-2">
+                        {impactOptions.map(opt => (
+                          <button key={opt} onClick={() => setAnswer(opt)} className={cn(
+                            'w-full rounded-xl border p-4 text-left text-sm transition-all',
+                            answers[4] === opt ? 'bg-primary/5 border-primary ring-2 ring-primary/20 font-medium' : 'bg-card hover:border-primary/50'
+                          )}>{opt}</button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </motion.div>
               </AnimatePresence>
 
               {/* Navigation */}
