@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import DocumentScanner from '@/components/scanner/DocumentScanner';
 import { QRCodeSVG } from 'qrcode.react';
+import EmailSendTab from '@/components/claim/EmailSendTab';
 
 export default function ClaimDetail() {
   const { id } = useParams<{ id: string }>();
