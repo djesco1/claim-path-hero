@@ -17,6 +17,7 @@ const publicLinks = [
 const privateLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/claims/new', label: 'Nueva Reclamación', icon: PlusCircle },
+  { href: '/inteligencia', label: 'IA', icon: Sparkles, badge: true },
   { href: '/analytics', label: 'Estadísticas', icon: BarChart3 },
   { href: '/profile', label: 'Perfil', icon: User },
   { href: '/pricing', label: 'Precios', icon: Tag },
