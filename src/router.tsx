@@ -15,6 +15,8 @@ import Terms from '@/pages/Terms';
 import Privacy from '@/pages/Privacy';
 import Analytics from '@/pages/Analytics';
 import SharedClaim from '@/pages/SharedClaim';
+import Diagnostico from '@/pages/Diagnostico';
+import Inteligencia from '@/pages/Inteligencia';
 import NotFound from '@/pages/NotFound';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
@@ -37,12 +39,14 @@ function AnimatedRoutes() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/share/:token" element={<SharedClaim />} />
+          <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/claims/new" element={<ProtectedRoute><NewClaim /></ProtectedRoute>} />
           <Route path="/claims/:id" element={<ProtectedRoute><ClaimDetail /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+          <Route path="/inteligencia" element={<ProtectedRoute><Inteligencia /></ProtectedRoute>} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />

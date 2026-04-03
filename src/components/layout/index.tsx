@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3, Moon, Sun } from 'lucide-react';
+import { Shield, Home, PlusCircle, User, Tag, Menu, X, LogOut, BarChart3, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ const publicLinks = [
 const privateLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/claims/new', label: 'Nueva Reclamación', icon: PlusCircle },
+  { href: '/inteligencia', label: 'IA', icon: Sparkles, badge: true },
   { href: '/analytics', label: 'Estadísticas', icon: BarChart3 },
   { href: '/profile', label: 'Perfil', icon: User },
   { href: '/pricing', label: 'Precios', icon: Tag },
@@ -138,6 +139,7 @@ export function BottomNav() {
   const items = [
     { href: '/dashboard', icon: Home, label: 'Inicio' },
     { href: '/claims/new', icon: PlusCircle, label: 'Nueva' },
+    { href: '/inteligencia', icon: Sparkles, label: 'IA' },
     { href: '/analytics', icon: BarChart3, label: 'Stats' },
     { href: '/profile', icon: User, label: 'Perfil' },
   ];
