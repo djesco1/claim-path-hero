@@ -6,6 +6,56 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function extractJsonFromResponse(response: string): unknown {
+  let cleaned = response
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/g, "")
+    .trim();
+
+  const jsonStart = cleaned.search(/\{/);
+  const jsonEnd = cleaned.lastIndexOf("}");
+
+  if (jsonStart === -1 || jsonEnd === -1) {
+    throw new Error("No JSON object found in response");
+  }
+
+  cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (_e) {
+    // Fix common LLM JSON issues
+    cleaned = cleaned
+      .replace(/,\s*}/g, "}")
+      .replace(/,\s*]/g, "]")
+      .replace(/[\x00-\x1F\x7F]/g, " ") // control chars including bad escapes
+      .replace(/\\(?!["\\/bfnrtu])/g, "\\\\"); // fix bad escape sequences
+
+    try {
+      return JSON.parse(cleaned);
+    } catch (_e2) {
+      // Last resort: extract fields manually
+      const titleMatch = cleaned.match(/"title"\s*:\s*"([^"]+)"/);
+      const docMatch = cleaned.match(/"document_text"\s*:\s*"([\s\S]*?)(?:"\s*,\s*"legal_rights)/);
+      const instrMatch = cleaned.match(/"instructions"\s*:\s*"([\s\S]*?)(?:"\s*,\s*"deadline)/);
+      const probMatch = cleaned.match(/"success_probability"\s*:\s*(\d+)/);
+
+      if (titleMatch && docMatch) {
+        return {
+          title: titleMatch[1],
+          document_text: docMatch[1].replace(/\\n/g, "\n").replace(/\\"/g, '"'),
+          legal_rights: [],
+          instructions: instrMatch ? instrMatch[1].replace(/\\n/g, "\n") : "Consulte con un abogado para los próximos pasos.",
+          deadline_suggestion: null,
+          success_probability: probMatch ? parseInt(probMatch[1]) : 50,
+        };
+      }
+
+      throw new Error("Could not parse AI response after multiple attempts");
+    }
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -54,7 +104,14 @@ REGLAS:
 - Incluye fecha y espacios para firma
 - Sé específico y contundente en los argumentos legales
 
-Responde SIEMPRE en formato JSON con esta estructura exacta:
+REGLAS DE FORMATO JSON:
+- Responde ÚNICAMENTE con JSON válido, sin texto adicional
+- NO uses caracteres de escape inválidos en strings
+- Usa \\n para saltos de línea dentro de strings
+- NO uses comillas dobles sin escapar dentro de strings
+- Asegúrate de que el JSON sea parseable
+
+Responde con esta estructura exacta:
 {
   "title": "Título corto descriptivo de la reclamación",
   "document_text": "Texto completo del documento legal formal",
@@ -63,20 +120,20 @@ Responde SIEMPRE en formato JSON con esta estructura exacta:
       "name": "Nombre del derecho",
       "legal_basis": "Ley/Artículo específico",
       "explanation": "Explicación de cómo aplica",
-      "strength": "strong|moderate|reference"
+      "strength": "strong"
     }
   ],
-  "instructions": "Instrucciones paso a paso para enviar la reclamación, incluyendo instituciones colombianas relevantes",
+  "instructions": "Instrucciones paso a paso para enviar la reclamación",
   "deadline_suggestion": "YYYY-MM-DD",
   "success_probability": 75
 }
 
 Para success_probability, evalúa del 0 al 100 qué tan probable es que esta reclamación tenga éxito considerando:
-- Solidez de los fundamentos legales (¿hay leyes claras que protejan al reclamante?)
-- Claridad de los hechos descritos (¿son específicos y verificables?)
+- Solidez de los fundamentos legales
+- Claridad de los hechos descritos
 - Monto involucrado vs proporcionalidad
-- Tipo de contraparte (empresas grandes suelen tener más recursos)
-- Precedentes jurisprudenciales típicos en Colombia para este tipo de caso
+- Tipo de contraparte
+- Precedentes jurisprudenciales típicos en Colombia
 Sé realista y honesto en la evaluación.`;
 
     const userPrompt = `Genera un documento legal de reclamación con estos datos:
@@ -88,7 +145,7 @@ Contraparte: ${counterparty_name} (${counterparty_type === "company" ? "Empresa"
 ${amount_involved ? `Monto involucrado: $${amount_involved} COP` : ""}
 ${incident_date ? `Fecha del incidente: ${incident_date}` : ""}
 
-Genera el documento completo con referencias legales reales colombianas.`;
+Genera el documento completo con referencias legales reales colombianas. Responde SOLO con JSON válido.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -113,13 +170,16 @@ Genera el documento completo con referencias legales reales colombianas.`;
     }
 
     const aiData = await aiResponse.json();
-    let content = aiData.choices?.[0]?.message?.content || "";
+    const content = aiData.choices?.[0]?.message?.content || "";
 
-    // Parse JSON from response
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Could not parse AI response");
-
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = extractJsonFromResponse(content) as {
+      title: string;
+      document_text: string;
+      legal_rights: unknown[];
+      instructions: string;
+      deadline_suggestion: string | null;
+      success_probability: number;
+    };
 
     // Calculate deadline (30 days from now if not provided)
     const deadline = parsed.deadline_suggestion || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
