@@ -14,12 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          page_path: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          page_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       assistant_conversations: {
         Row: {
           claim_id: string | null
           created_at: string
           id: string
           messages: Json
+          mode: string | null
+          title: string | null
           updated_at: string
           user_id: string
         }
@@ -28,6 +60,8 @@ export type Database = {
           created_at?: string
           id?: string
           messages?: Json
+          mode?: string | null
+          title?: string | null
           updated_at?: string
           user_id: string
         }
@@ -36,6 +70,8 @@ export type Database = {
           created_at?: string
           id?: string
           messages?: Json
+          mode?: string | null
+          title?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -90,21 +126,27 @@ export type Database = {
           created_at: string
           event_type: string
           id: string
+          metadata: Json | null
           note: string | null
+          user_id: string | null
         }
         Insert: {
           claim_id: string
           created_at?: string
           event_type: string
           id?: string
+          metadata?: Json | null
           note?: string | null
+          user_id?: string | null
         }
         Update: {
           claim_id?: string
           created_at?: string
           event_type?: string
           id?: string
+          metadata?: Json | null
           note?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -188,6 +230,47 @@ export type Database = {
         }
         Relationships: []
       }
+      diagnostics: {
+        Row: {
+          answers: Json
+          claim_id: string | null
+          converted_to_claim: boolean | null
+          created_at: string | null
+          id: string
+          result: Json
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          answers: Json
+          claim_id?: string | null
+          converted_to_claim?: boolean | null
+          created_at?: string | null
+          id?: string
+          result: Json
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          claim_id?: string | null
+          converted_to_claim?: boolean | null
+          created_at?: string | null
+          id?: string
+          result?: Json
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostics_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           claim_id: string
@@ -197,6 +280,7 @@ export type Database = {
           file_url: string
           id: string
           mime_type: string | null
+          user_id: string | null
         }
         Insert: {
           claim_id: string
@@ -206,6 +290,7 @@ export type Database = {
           file_url: string
           id?: string
           mime_type?: string | null
+          user_id?: string | null
         }
         Update: {
           claim_id?: string
@@ -215,10 +300,64 @@ export type Database = {
           file_url?: string
           id?: string
           mime_type?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "documents_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_logs: {
+        Row: {
+          body_preview: string | null
+          cc_emails: string[] | null
+          claim_id: string | null
+          id: string
+          pdf_attached: boolean | null
+          recipient_email: string
+          recipient_name: string | null
+          resend_message_id: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          body_preview?: string | null
+          cc_emails?: string[] | null
+          claim_id?: string | null
+          id?: string
+          pdf_attached?: boolean | null
+          recipient_email: string
+          recipient_name?: string | null
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          user_id: string
+        }
+        Update: {
+          body_preview?: string | null
+          cc_emails?: string[] | null
+          claim_id?: string | null
+          id?: string
+          pdf_attached?: boolean | null
+          recipient_email?: string
+          recipient_name?: string | null
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_claim_id_fkey"
             columns: ["claim_id"]
             isOneToOne: false
             referencedRelation: "claims"
@@ -294,7 +433,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_claim_funnel: {
+        Row: {
+          claims_completed: number | null
+          claims_started: number | null
+          docs_downloaded: number | null
+          emails_sent: number | null
+          wizard_opens: number | null
+        }
+        Relationships: []
+      }
+      v_daily_active_users: {
+        Row: {
+          date: string | null
+          dau: number | null
+        }
+        Relationships: []
+      }
+      v_diagnostic_conversion: {
+        Row: {
+          avg_viability_score: number | null
+          converted: number | null
+          total_diagnostics: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       decrement_claims_used: { Args: { uid: string }; Returns: undefined }

@@ -1,166 +1,98 @@
-# ClaimPath - Plataforma de Reclamaciones Legales
+# ClaimPath — Plataforma de Reclamaciones Legales con IA
 
-ClaimPath es una aplicación web para gestionar reclamaciones legales en Colombia, con generación automática de documentos legales usando IA.
+> Acceso a la justicia para todos. Sin abogados. Sin burocracia.
 
-## 🚀 Tecnologías
+## Estado del proyecto
+- **Web App**: ✅ React SPA (Vite + TypeScript + Tailwind CSS)
+- **Backend**: ✅ Lovable Cloud (PostgreSQL + Edge Functions)
+- **Analytics Engine**: 🏗️ Fundación lista — ML pipeline en roadmap
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **UI**: Shadcn/ui + Tailwind CSS
-- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
-- **Estado**: TanStack Query (React Query)
-- **Routing**: React Router v6
-- **Formularios**: React Hook Form + Zod
+## Arquitectura
 
-## 📋 Requisitos Previos
+```
+Browser → Lovable (React SPA)
+             ↓
+        Auth System
+             ↓
+        Database (PostgreSQL + pgvector)
+             ↓ (via Backend Functions)
+        AI Models (GPT-4o + text-embedding-3-small)
+             ↓
+        Resend (Email delivery)
+             ↓ (future)
+        Python ML Service (success predictor)
+             ↓
+        analytics_events table (event store)
+```
 
-- Node.js 18+ o Bun
-- Cuenta de Supabase (ya configurada en `.env`)
+## Tech Stack
 
-## 🛠️ Instalación
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui
+- **State**: TanStack Query v5
+- **Backend**: Lovable Cloud (Supabase — Auth, PostgreSQL, Storage, Edge Functions)
+- **AI**: GPT-4o for document generation, text-embedding-3-small for RAG
+- **Email**: Resend
+- **Charts**: Recharts
+- **PDF**: jsPDF
+- **Animation**: Framer Motion
+- **Mobile**: Capacitor (iOS/Android)
+- **Testing**: Vitest
 
-1. Instalar dependencias:
+## Setup
 
 ```bash
 npm install
-```
-
-o con Bun:
-
-```bash
-bun install
-```
-
-2. Las variables de entorno ya están configuradas en el archivo `.env`
-
-## 🏃 Ejecutar el Proyecto
-
-### Modo Desarrollo
-
-```bash
 npm run dev
 ```
 
-o con Bun:
+### Environment Variables
 
-```bash
-bun run dev
-```
+See `.env.example` for required variables.
 
-La aplicación estará disponible en `http://localhost:5173`
+### Google OAuth (opcional)
 
-### Build de Producción
+1. Go to `console.cloud.google.com`
+2. Create OAuth 2.0 Client ID (Web application)
+3. Add redirect URI: `https://YOUR_PROJECT.supabase.co/auth/v1/callback`
+4. Enable Google provider in Authentication settings
+5. Set `VITE_GOOGLE_OAUTH_ENABLED=true` in `.env`
 
-```bash
-npm run build
-```
+## Features
 
-### Preview del Build
+- ✅ Email + password authentication
+- ✅ Google OAuth (configurable via feature flag)
+- ✅ Claim creation wizard with voice input
+- ✅ AI document generation (GPT-4o)
+- ✅ RAG legal assistant
+- ✅ Email sending to counterparty
+- ✅ Document scanning (OCR)
+- ✅ Success probability gauge
+- ✅ Analytics dashboard
+- ✅ Dark mode
+- ✅ Mobile responsive
+- ✅ Analytics event store (ML pipeline foundation)
 
-```bash
-npm run preview
-```
+## Troubleshooting
 
-## 📜 Scripts Disponibles
+| Error | Causa | Solución |
+|-------|-------|----------|
+| "Unsupported provider" en Google OAuth | Google no configurado | Ver sección Google OAuth |
+| "User profile not created" | Trigger no ejecutado | Verificar trigger handle_new_user |
+| Edge Function 500 | API key no configurada | Configurar secret en backend |
+| RLS error en insert | user_id no incluido | Verificar que inserts incluyen auth.uid() |
 
-- `npm run dev` - Servidor de desarrollo con hot reload
-- `npm run build` - Build optimizado para producción
-- `npm run build:dev` - Build en modo desarrollo
-- `npm run preview` - Preview del build de producción
-- `npm run lint` - Ejecutar ESLint
-- `npm run test` - Ejecutar tests una vez
-- `npm run test:watch` - Ejecutar tests en modo watch
+## Roadmap
 
-## ⚠️ Problemas Conocidos y Soluciones
+### v1.0 (actual)
+- ✅ Auth completo (email + Google OAuth)
+- ✅ Wizard de reclamaciones
+- ✅ Generación de documentos con IA
+- ✅ RAG legal assistant
+- ✅ Envío de email a contraparte
+- ✅ Analíticas básicas
+- ✅ Analytics event store (fundación ML)
 
-### 1. Error "Unsupported provider: provider is not enabled"
-
-**Problema**: El proveedor de autenticación de Google no está habilitado en Supabase.
-
-**Solución**: 
-- Ve a tu proyecto en Supabase Dashboard
-- Navega a Authentication > Providers
-- Habilita el proveedor de Google
-- Configura las credenciales OAuth de Google Cloud Console
-- Mientras tanto, usa autenticación por correo y contraseña
-
-### 2. Pantalla en Blanco Después del Login
-
-**Corrección aplicada**: Se mejoró el componente `AuthCallback.tsx` para manejar correctamente:
-- Tokens de OAuth en el hash de la URL
-- Errores de autenticación
-- Redirección al dashboard
-- Mensajes de error informativos
-
-### 3. Mensaje "Publish or update your Lovable project"
-
-Este mensaje aparece cuando el proyecto no está publicado en Lovable. No afecta el funcionamiento local.
-
-## 🏗️ Estructura del Proyecto
-
-```
-src/
-├── components/       # Componentes reutilizables
-│   ├── assistant/   # Asistente legal con IA
-│   ├── auth/        # Componentes de autenticación
-│   ├── claim/       # Componentes de reclamaciones
-│   ├── scanner/     # Escáner de documentos
-│   ├── shared/      # Componentes compartidos
-│   ├── ui/          # Componentes de UI (Shadcn)
-│   └── voice/       # Input de voz
-├── hooks/           # Custom hooks
-├── integrations/    # Integraciones (Supabase)
-├── lib/             # Utilidades y configuración
-├── pages/           # Páginas de la aplicación
-├── schemas/         # Esquemas de validación (Zod)
-├── types/           # Tipos de TypeScript
-└── __tests__/       # Tests
-
-supabase/
-├── functions/       # Edge Functions
-│   ├── embed-claim/
-│   ├── extract-text/
-│   ├── generate-claim/
-│   └── legal-assistant/
-└── migrations/      # Migraciones de base de datos
-```
-
-## 🔑 Funcionalidades Principales
-
-- ✅ Autenticación (Email/Password + Google OAuth)
-- ✅ Dashboard de reclamaciones
-- ✅ Creación de reclamaciones con asistente IA
-- ✅ Escaneo y procesamiento de documentos
-- ✅ Generación automática de documentos legales
-- ✅ Asistente legal conversacional
-- ✅ Compartir reclamaciones
-- ✅ Analytics y estadísticas
-- ✅ Gestión de perfil de usuario
-
-## 🔐 Autenticación
-
-La aplicación soporta dos métodos de autenticación:
-
-1. **Email y Contraseña**: Totalmente funcional
-2. **Google OAuth**: Requiere configuración adicional en Supabase
-
-## 📱 Responsive Design
-
-La aplicación está optimizada para:
-- Desktop (1024px+)
-- Tablet (768px - 1023px)
-- Mobile (< 768px)
-
-## 🧪 Testing
-
-El proyecto incluye configuración para:
-- Vitest (unit tests)
-- Playwright (e2e tests)
-- Testing Library (component tests)
-
-## 📄 Licencia
-
-Este proyecto es privado y confidencial.
-
-## 🤝 Soporte
-
-Para problemas o preguntas, contacta al equipo de desarrollo.
+### v2.0 (futuro)
+- Python ML service: predictor de éxito
+- Multi-país: Ecuador, Perú, Venezuela
+- Marketplace de abogados para casos escalados

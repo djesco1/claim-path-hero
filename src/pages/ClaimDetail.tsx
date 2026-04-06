@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import DocumentScanner from '@/components/scanner/DocumentScanner';
 import { QRCodeSVG } from 'qrcode.react';
+import EmailSendTab from '@/components/claim/EmailSendTab';
 
 export default function ClaimDetail() {
   const { id } = useParams<{ id: string }>();
@@ -138,6 +139,7 @@ export default function ClaimDetail() {
             <TabsTrigger value="document">Documento</TabsTrigger>
             <TabsTrigger value="rights">Derechos</TabsTrigger>
             <TabsTrigger value="instructions">Instrucciones</TabsTrigger>
+            <TabsTrigger value="send">Enviar</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="files">Archivos</TabsTrigger>
           </TabsList>
@@ -214,6 +216,11 @@ export default function ClaimDetail() {
                 {daysLeft !== null && <p className="text-sm text-muted-foreground">{daysLeft > 0 ? `${daysLeft} días restantes` : 'Plazo vencido'}</p>}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="send" className="mt-6">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Enviar a la contraparte</h3>
+            <EmailSendTab claim={claim} />
           </TabsContent>
 
           <TabsContent value="timeline" className="mt-6">

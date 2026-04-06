@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, Sparkles } from 'lucide-react';
+import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/layout';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -39,90 +39,178 @@ const faqs = [
   { q: '¿Qué tipos de reclamaciones soportan?', a: 'Actualmente: arrendamiento, laboral, seguros, entidades públicas, empresas de servicios, y otros casos generales.' },
 ];
 
-const floatingBadges = [
-  { text: 'Ley 820 Art. 29', color: 'bg-primary/10 text-primary', delay: 0.3, x: 'right-[-20px]', y: 'top-4' },
-  { text: 'Derecho sólido', color: 'bg-emerald-100 text-emerald-700', delay: 0.6, x: 'left-[-30px]', y: 'bottom-8' },
-  { text: 'PDF listo', color: 'bg-amber-100 text-amber-700', delay: 0.9, x: 'right-[-10px]', y: 'bottom-20' },
-];
+function HeroBackground() {
+  return (
+    <>
+      {/* Layer 1: Base gradient */}
+      <div className="absolute inset-0 z-0 hero-base-gradient" />
+
+      {/* Layer 2: Animated mesh blobs */}
+      <svg className="absolute inset-0 z-[1] w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 800">
+        <defs>
+          <filter id="mesh-blur">
+            <feGaussianBlur stdDeviation="80" />
+          </filter>
+        </defs>
+        <circle className="hero-blob-1" cx="200" cy="300" r="180" fill="#4F46E5" opacity="0.14" filter="url(#mesh-blur)" />
+        <circle className="hero-blob-2" cx="800" cy="200" r="150" fill="#7C3AED" opacity="0.12" filter="url(#mesh-blur)" />
+        <circle className="hero-blob-3" cx="600" cy="500" r="200" fill="#06B6D4" opacity="0.10" filter="url(#mesh-blur)" />
+        <circle className="hero-blob-4" cx="1000" cy="600" r="160" fill="#10B981" opacity="0.12" filter="url(#mesh-blur)" />
+        <circle className="hero-blob-5" cx="400" cy="700" r="140" fill="#4F46E5" opacity="0.08" filter="url(#mesh-blur)" />
+        <circle className="hero-blob-6" cx="900" cy="400" r="170" fill="#7C3AED" opacity="0.10" filter="url(#mesh-blur)" />
+      </svg>
+
+      {/* Layer 3: Dot grid */}
+      <div className="absolute inset-0 z-[2]" style={{
+        backgroundImage: 'radial-gradient(circle, rgba(79,70,229,0.12) 1px, transparent 1px)',
+        backgroundSize: '28px 28px',
+      }} />
+
+      {/* Layer 4: Scales of justice watermark */}
+      <svg className="absolute z-[1] opacity-[0.04] hero-scales-rotate" style={{ right: '-40px', top: '50%', transform: 'translateY(-50%)', width: '500px', height: '500px' }} viewBox="0 0 512 512" fill="#4F46E5">
+        <path d="M256 32c-8.8 0-16 7.2-16 16v16H112c-8.8 0-16 7.2-16 16s7.2 16 16 16h12.7l-53.4 160c-1.5 4.4-0.8 9.3 1.8 13.1C85.5 288 115.5 320 176 320s90.5-32 102.9-50.9c2.6-3.8 3.3-8.7 1.8-13.1L227.3 96H240v320h-64c-8.8 0-16 7.2-16 16s7.2 16 16 16h160c8.8 0 16-7.2 16-16s-7.2-16-16-16h-64V96h12.7l-53.4 160c-1.5 4.4-0.8 9.3 1.8 13.1C245.5 288 275.5 320 336 320s90.5-32 102.9-50.9c2.6-3.8 3.3-8.7 1.8-13.1L387.3 96H400c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V48c0-8.8-7.2-16-16-16zM176 288c-32.5 0-55.5-16-68-28l68-204 68 204c-12.5 12-35.5 28-68 28zm160 0c-32.5 0-55.5-16-68-28l68-204 68 204c-12.5 12-35.5 28-68 28z"/>
+      </svg>
+
+      {/* Layer 5: Noise texture */}
+      <div className="absolute inset-0 z-[3] opacity-[0.025] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+      }} />
+
+      {/* Particles */}
+      <div className="absolute inset-0 z-[2] pointer-events-none hidden md:block">
+        {/* Diamonds */}
+        <div className="hero-particle" style={{ top: '15%', left: '8%', width: '4px', height: '4px', background: '#4F46E5', transform: 'rotate(45deg)', animationDuration: '8s' }} />
+        <div className="hero-particle" style={{ top: '70%', left: '15%', width: '4px', height: '4px', background: '#7C3AED', transform: 'rotate(45deg)', animationDuration: '10s', animationDelay: '2s' }} />
+        <div className="hero-particle" style={{ top: '25%', left: '85%', width: '4px', height: '4px', background: '#06B6D4', transform: 'rotate(45deg)', animationDuration: '7s', animationDelay: '1s' }} />
+        <div className="hero-particle" style={{ top: '80%', left: '75%', width: '4px', height: '4px', background: '#10B981', transform: 'rotate(45deg)', animationDuration: '9s', animationDelay: '3s' }} />
+        <div className="hero-particle" style={{ top: '45%', left: '5%', width: '4px', height: '4px', background: '#4F46E5', transform: 'rotate(45deg)', animationDuration: '11s', animationDelay: '4s' }} />
+        <div className="hero-particle" style={{ top: '60%', left: '92%', width: '4px', height: '4px', background: '#7C3AED', transform: 'rotate(45deg)', animationDuration: '6s', animationDelay: '5s' }} />
+        {/* Circles */}
+        <div className="hero-particle" style={{ top: '20%', left: '40%', width: '6px', height: '6px', background: '#06B6D4', borderRadius: '50%', animationDuration: '9s', animationDelay: '1.5s' }} />
+        <div className="hero-particle" style={{ top: '55%', left: '60%', width: '6px', height: '6px', background: '#10B981', borderRadius: '50%', animationDuration: '12s', animationDelay: '3.5s' }} />
+        <div className="hero-particle" style={{ top: '35%', left: '70%', width: '6px', height: '6px', background: '#4F46E5', borderRadius: '50%', animationDuration: '8s', animationDelay: '0.5s' }} />
+        <div className="hero-particle" style={{ top: '75%', left: '50%', width: '6px', height: '6px', background: '#7C3AED', borderRadius: '50%', animationDuration: '10s', animationDelay: '2.5s' }} />
+        {/* Lines */}
+        <div className="hero-particle" style={{ top: '30%', left: '25%', width: '20px', height: '2px', background: '#4F46E5', animationDuration: '7s', animationDelay: '4s' }} />
+        <div className="hero-particle" style={{ top: '65%', left: '80%', width: '20px', height: '2px', background: '#06B6D4', animationDuration: '11s', animationDelay: '1s' }} />
+      </div>
+    </>
+  );
+}
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
 
-      {/* Hero with animated gradient */}
-      <section className="relative overflow-hidden">
-        {/* Animated mesh gradient background */}
-        <div className="absolute inset-0 animate-gradient-shift bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 opacity-80" />
-        {/* Dot grid pattern */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, hsl(243 75% 59% / 0.07) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }} />
+      {/* Hero */}
+      <section className="relative overflow-hidden min-h-screen flex items-center">
+        <HeroBackground />
 
-        <div className="container py-20 lg:py-28 relative">
+        <div className="container relative z-10 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-6"
-            >
-              <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-foreground">
+            {/* Left column */}
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+              >
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#C7D2FE] bg-white/80 backdrop-blur-sm px-4 py-1.5 text-[13px] font-medium text-[#4F46E5]">
+                  <span className="text-[#6366F1]">✦</span> IA Legal • Colombia
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="text-[clamp(2.4rem,4.5vw,3.8rem)] font-extrabold leading-[1.1] tracking-tight text-foreground"
+              >
                 Reclama lo que te corresponde.
                 <br />
-                <span className="text-primary">Sin abogados. Sin burocracia.</span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-lg">
+                <span className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] bg-clip-text text-transparent">
+                  Sin abogados. Sin burocracia.
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="text-lg text-muted-foreground leading-relaxed max-w-[480px]"
+              >
                 Describe tu problema en palabras simples. En minutos tendrás el documento legal correcto, listo para enviar.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button size="lg" asChild className="shadow-lg shadow-primary/20"><Link to="/register">Empezar gratis</Link></Button>
-                <Button size="lg" variant="outline" asChild><a href="#como-funciona">Ver cómo funciona</a></Button>
-              </div>
-              <div className="flex flex-wrap gap-6 pt-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Basado en legislación colombiana vigente</span>
-                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Documentos generados con IA legal</span>
-                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> 100% confidencial</span>
-              </div>
-            </motion.div>
-            <div className="hidden lg:block relative">
-              {/* Floating badges */}
-              {floatingBadges.map((badge, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: badge.delay, duration: 0.5, type: 'spring' }}
-                  className={`absolute ${badge.x} ${badge.y} z-10 rounded-lg px-3 py-1.5 text-xs font-medium shadow-sm ${badge.color}`}
-                >
-                  {badge.text}
-                </motion.span>
-              ))}
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="flex flex-wrap gap-4 pt-2"
+              >
+                <Button size="lg" asChild className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-lg shadow-[#4F46E5]/20 rounded-xl px-7 py-3.5 text-base font-semibold">
+                  <Link to="/register">Empezar gratis <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="rounded-xl px-6 py-3.5 border-[1.5px] hover:border-[#818CF8] hover:shadow-sm transition-all">
+                  <a href="#como-funciona">Ver cómo funciona</a>
+                </Button>
+                <Button size="lg" variant="ghost" asChild className="rounded-xl px-6 py-3.5 text-muted-foreground hover:text-primary transition-all">
+                  <Link to="/diagnostico">¿No sabes si tienes caso?</Link>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="flex flex-wrap gap-6 pt-4 text-sm text-muted-foreground"
+              >
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#4F46E5]" /> Basado en ley colombiana</span>
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#4F46E5]" /> Documentos con IA legal</span>
+                <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#4F46E5]" /> 100% confidencial</span>
+              </motion.div>
+            </div>
+
+            {/* Right column — document card + floating badges */}
+            <div className="hidden lg:block relative h-[480px]">
+              {/* Background glow */}
+              <div className="absolute -inset-[60px] bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.08),transparent_70%)] z-0" />
+
+              {/* Floating Badge: Ley */}
+              <span className="absolute top-4 right-[-16px] z-10 pointer-events-none rounded-full px-3.5 py-1.5 text-xs font-semibold bg-white border border-[#C7D2FE] text-[#4338CA] shadow-[0_4px_12px_rgba(79,70,229,0.15)] animate-float-b">
+                Ley 820 Art. 29
+              </span>
+
+              {/* Floating Badge: PDF */}
+              <span className="absolute bottom-20 right-[-24px] z-10 pointer-events-none rounded-full px-3.5 py-1.5 text-xs font-semibold bg-white border border-[#FDE68A] text-[#D97706] shadow-[0_4px_12px_rgba(245,158,11,0.15)] animate-float-c">
+                PDF listo ✓
+              </span>
+
+              {/* Floating Badge: Derecho */}
+              <span className="absolute bottom-5 left-[-16px] z-10 pointer-events-none rounded-full px-3.5 py-1.5 text-xs font-semibold bg-white border border-[#A7F3D0] text-[#059669] shadow-[0_4px_12px_rgba(16,185,129,0.15)] animate-float-a">
+                Derecho sólido ✓
+              </span>
+
+              {/* Main card */}
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="rounded-2xl border bg-card p-8 shadow-lg"
+                className="absolute inset-10 rounded-[20px] bg-white p-7 shadow-[0_20px_60px_rgba(79,70,229,0.15),0_4px_16px_rgba(0,0,0,0.06)] z-[5]"
               >
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-8 w-8 text-primary" />
-                    <div>
-                      <p className="font-semibold text-foreground">Documento Legal</p>
-                      <p className="text-xs text-muted-foreground">Generado por ClaimPath</p>
-                    </div>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="rounded-full bg-[#EEF2FF] p-2.5">
+                    <Shield className="h-5 w-5 text-[#4F46E5]" />
                   </div>
-                  <div className="border-t pt-4 space-y-2">
-                    <div className="h-3 rounded bg-muted w-full animate-pulse" />
-                    <div className="h-3 rounded bg-muted w-5/6" />
-                    <div className="h-3 rounded bg-muted w-4/6" />
-                    <div className="h-3 rounded bg-muted w-full" />
-                    <div className="h-3 rounded bg-muted w-3/4" />
+                  <div>
+                    <p className="font-semibold text-[15px] text-foreground">Documento Legal</p>
+                    <p className="text-[13px] text-muted-foreground">Generado por ClaimPath</p>
                   </div>
-                  <div className="flex gap-2 pt-2">
-                    <span className="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary font-medium">Ley 820 Art. 29</span>
-                    <span className="rounded-md bg-emerald-100 px-2 py-1 text-xs text-emerald-700 font-medium">Derecho sólido</span>
-                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  {[85, 92, 78, 95, 65].map((w, i) => (
+                    <div key={i} className="h-2 rounded-full hero-shimmer" style={{ width: `${w}%` }} />
+                  ))}
                 </div>
               </motion.div>
             </div>
@@ -131,10 +219,10 @@ export default function Landing() {
       </section>
 
       {/* How it works */}
-      <section id="como-funciona" className="bg-card border-y py-20">
+      <section id="como-funciona" className="bg-[#FAFAFA] dark:bg-card border-y py-20">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Tan simple como tres pasos</h2>
-          <div className="grid md:grid-cols-3 gap-8 relative">
+          <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
               <motion.div
                 key={i}
@@ -178,7 +266,7 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-card border-y py-20">
+      <section className="bg-[#F8FAFC] dark:bg-card border-y py-20">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Personas que recuperaron lo suyo</h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -215,7 +303,6 @@ export default function Landing() {
         <h2 className="text-3xl font-bold text-center mb-4 text-foreground">Accede a tus derechos, sin barreras</h2>
         <p className="text-center text-muted-foreground mb-12">Elige el plan que mejor se adapte a ti</p>
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Free */}
           <div className="rounded-xl border bg-card p-8 space-y-6">
             <div>
               <h3 className="text-2xl font-bold text-foreground">Gratis</h3>
@@ -227,7 +314,6 @@ export default function Landing() {
             </ul>
             <Button variant="outline" className="w-full" asChild><Link to="/register">Empezar gratis</Link></Button>
           </div>
-          {/* Pro */}
           <div className="rounded-xl border-2 border-primary bg-card p-8 space-y-6 relative">
             <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">Más popular</span>
             <div>
@@ -243,7 +329,7 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="bg-card border-y py-20">
+      <section id="faq" className="bg-[#FAFAFA] dark:bg-card border-y py-20">
         <div className="container max-w-2xl">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">Preguntas frecuentes</h2>
           <Accordion type="single" collapsible className="space-y-2">
@@ -257,40 +343,57 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* CTA Banner */}
+      <section className="py-16 bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }} />
+        </div>
+        <div className="container relative z-10 text-center space-y-6">
+          <h2 className="text-3xl font-bold text-white">¿Listo para reclamar lo tuyo?</h2>
+          <p className="text-white/80 text-lg max-w-lg mx-auto">Miles de personas ya recuperaron lo que les correspondía. Tu turno.</p>
+          <Button size="lg" asChild className="bg-white text-[#4F46E5] hover:bg-white/90 rounded-xl px-8 py-3.5 font-semibold shadow-lg">
+            <Link to="/register">Empezar gratis <ArrowRight className="ml-2 h-4 w-4" /></Link>
+          </Button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t py-12">
+      <footer className="bg-[#0F172A] text-white py-12">
         <div className="container">
           <div className="grid sm:grid-cols-4 gap-8 mb-8">
             <div className="sm:col-span-1">
               <div className="flex items-center gap-2 mb-3">
-                <Shield className="h-5 w-5 text-primary" />
-                <span className="font-bold text-foreground">ClaimPath</span>
+                <Shield className="h-5 w-5 text-[#818CF8]" />
+                <span className="font-bold">ClaimPath</span>
               </div>
-              <p className="text-sm text-muted-foreground">Acceso a la justicia para todos.</p>
+              <p className="text-sm text-slate-400">Acceso a la justicia para todos.</p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm">Producto</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/dashboard" className="hover:text-foreground">Dashboard</Link></li>
-                <li><a href="#tipos" className="hover:text-foreground">Tipos de reclamación</a></li>
-                <li><Link to="/pricing" className="hover:text-foreground">Precios</Link></li>
+              <h4 className="font-semibold mb-3 text-sm">Producto</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><Link to="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
+                <li><a href="#tipos" className="hover:text-white transition-colors">Tipos de reclamación</a></li>
+                <li><Link to="/pricing" className="hover:text-white transition-colors">Precios</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/terms" className="hover:text-foreground">Términos y condiciones</Link></li>
-                <li><Link to="/privacy" className="hover:text-foreground">Política de privacidad</Link></li>
+              <h4 className="font-semibold mb-3 text-sm">Legal</h4>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li><Link to="/terms" className="hover:text-white transition-colors">Términos y condiciones</Link></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Política de privacidad</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm">Contacto</h4>
-              <p className="text-sm text-muted-foreground">contacto@claimpath.app</p>
+              <h4 className="font-semibold mb-3 text-sm">Contacto</h4>
+              <p className="text-sm text-slate-400">contacto@claimpath.app</p>
             </div>
           </div>
-          <div className="border-t pt-6 space-y-2">
-            <p className="text-xs text-muted-foreground text-center">© 2024 ClaimPath. Todos los derechos reservados.</p>
-            <p className="text-xs text-muted-foreground text-center max-w-2xl mx-auto">ClaimPath no es un servicio de asesoría legal. Los documentos generados son orientativos y no reemplazan la consulta con un abogado.</p>
+          <div className="border-t border-slate-800 pt-6 space-y-2">
+            <p className="text-xs text-slate-500 text-center">© 2024 ClaimPath. Todos los derechos reservados.</p>
+            <p className="text-xs text-slate-500 text-center max-w-2xl mx-auto">ClaimPath no es un servicio de asesoría legal. Los documentos generados son orientativos y no reemplazan la consulta con un abogado.</p>
           </div>
         </div>
       </footer>
