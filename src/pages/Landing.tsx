@@ -1,9 +1,16 @@
-import { Link } from 'react-router-dom';
+  import { Link } from 'react-router-dom';
 import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/layout';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { motion } from 'framer-motion';
+import { AnimatedBackground } from '@/components/shared/AnimatedBackground';
+import { FloatingParticles } from '@/components/shared/FloatingParticles';
+import { LegalOwl } from '@/components/shared/LegalOwl';
+import { GlassCard } from '@/components/shared/GlassCard';
+import { PremiumButton } from '@/components/shared/PremiumButton';
+import { useTypewriter } from '@/hooks/useTypewriter';
+import { pageVariants } from '@/lib/motion';
 
 const steps = [
   { icon: MessageSquare, title: 'Describe tu situación', desc: 'Cuéntanos qué pasó con tus propias palabras. No necesitas conocer términos legales.' },
@@ -99,8 +106,27 @@ function HeroBackground() {
 }
 
 export default function Landing() {
+  const { displayedText, showCursor } = useTypewriter({
+    text: 'Sin abogados. Sin burocracia.',
+    speed: 45,
+    delay: 1200,
+  });
+
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="min-h-screen bg-background"
+    >
+      {/* Fondo animado profesional */}
+      <AnimatedBackground />
+      <FloatingParticles count={25} />
+      
+      {/* Mascota búho */}
+      <LegalOwl />
+      
       <PublicNavbar />
 
       {/* Hero */}
@@ -130,7 +156,14 @@ export default function Landing() {
                 Reclama lo que te corresponde.
                 <br />
                 <span className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] bg-clip-text text-transparent">
-                  Sin abogados. Sin burocracia.
+                  {displayedText}
+                  {showCursor && (
+                    <motion.span
+                      animate={{ opacity: [1, 0] }}
+                      transition={{ duration: 0.53, repeat: Infinity, repeatType: 'reverse' }}
+                      className="inline-block w-1 h-12 bg-primary ml-1 align-middle"
+                    />
+                  )}
                 </span>
               </motion.h1>
 
@@ -149,15 +182,16 @@ export default function Landing() {
                 transition={{ delay: 0.5, duration: 0.5 }}
                 className="flex flex-wrap gap-4 pt-2"
               >
-                <Button size="lg" asChild className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-lg shadow-[#4F46E5]/20 rounded-xl px-7 py-3.5 text-base font-semibold">
-                  <Link to="/register">Empezar gratis <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="rounded-xl px-6 py-3.5 border-[1.5px] hover:border-[#818CF8] hover:shadow-sm transition-all">
-                  <a href="#como-funciona">Ver cómo funciona</a>
-                </Button>
-                <Button size="lg" variant="ghost" asChild className="rounded-xl px-6 py-3.5 text-muted-foreground hover:text-primary transition-all">
-                  <Link to="/diagnostico">¿No sabes si tienes caso?</Link>
-                </Button>
+                <Link to="/register">
+                  <PremiumButton size="lg">
+                    Empezar gratis <ArrowRight className="ml-2 h-4 w-4" />
+                  </PremiumButton>
+                </Link>
+                <a href="#como-funciona">
+                  <PremiumButton size="lg" variant="secondary">
+                    Ver cómo funciona
+                  </PremiumButton>
+                </a>
               </motion.div>
 
               <motion.div
@@ -192,15 +226,25 @@ export default function Landing() {
                 Derecho sólido ✓
               </span>
 
-              {/* Main card */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute inset-10 rounded-[20px] bg-white p-7 shadow-[0_20px_60px_rgba(79,70,229,0.15),0_4px_16px_rgba(0,0,0,0.06)] z-[5]"
+              {/* Main card con glassmorphism */}
+              <GlassCard
+                className="absolute inset-10 p-7 z-[5]"
+                glow
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: [0, -8, 0],
+                }}
+                transition={{ 
+                  opacity: { duration: 0.5, delay: 0.3 },
+                  scale: { duration: 0.5, delay: 0.3 },
+                  y: { duration: 4, repeat: Infinity, ease: 'easeInOut' }
+                }}
               >
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="rounded-full bg-[#EEF2FF] p-2.5">
-                    <Shield className="h-5 w-5 text-[#4F46E5]" />
+                  <div className="rounded-full bg-primary/10 p-2.5">
+                    <Shield className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-semibold text-[15px] text-foreground">Documento Legal</p>
@@ -209,10 +253,16 @@ export default function Landing() {
                 </div>
                 <div className="space-y-2.5">
                   {[85, 92, 78, 95, 65].map((w, i) => (
-                    <div key={i} className="h-2 rounded-full hero-shimmer" style={{ width: `${w}%` }} />
+                    <motion.div
+                      key={i}
+                      className="h-2 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${w}%` }}
+                      transition={{ duration: 0.8, delay: 0.5 + i * 0.1 }}
+                    />
                   ))}
                 </div>
-              </motion.div>
+              </GlassCard>
             </div>
           </div>
         </div>
@@ -249,18 +299,23 @@ export default function Landing() {
         <h2 className="text-3xl font-bold text-center mb-12 text-foreground">¿Cuál es tu situación?</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {claimTypesData.map((ct, i) => (
-            <motion.div
+            <GlassCard
               key={i}
+              className="p-6 cursor-pointer group"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="rounded-xl border bg-card p-6 hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group"
             >
-              <ct.icon className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              >
+                <ct.icon className="h-10 w-10 text-primary mb-4" />
+              </motion.div>
               <h3 className="font-semibold text-foreground mb-2">{ct.title}</h3>
               <p className="text-sm text-muted-foreground">{ct.desc}</p>
-            </motion.div>
+            </GlassCard>
           ))}
         </div>
       </section>
@@ -397,6 +452,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
   );
 }

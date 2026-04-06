@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, ArrowRight, Check, Shield, Loader2, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import VoiceInput from '@/components/voice/VoiceInput';
+import { AnimatedBackground } from '@/components/shared/AnimatedBackground';
+import { FloatingParticles } from '@/components/shared/FloatingParticles';
+import { GlassCard } from '@/components/shared/GlassCard';
+import { pageVariants, fadeInVariants } from '@/lib/motion';
+import { triggerConfetti } from '@/lib/confetti';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -74,6 +80,7 @@ export default function NewClaim() {
       if (error) throw error;
 
       await refreshProfile();
+      triggerConfetti();
       toast.success('¡Tu reclamación ha sido generada!');
       navigate(`/claims/${data.id}`);
     } catch (error: any) {
@@ -91,9 +98,23 @@ export default function NewClaim() {
 
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 max-w-3xl mx-auto">
+      <AnimatedBackground />
+      <FloatingParticles count={15} />
+      
+      <motion.div
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className="p-6 lg:p-8 max-w-3xl mx-auto relative z-10"
+      >
         {/* Progress */}
-        <div className="mb-8">
+        <motion.div
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          className="mb-8"
+        >
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm text-muted-foreground">Paso {step} de 4</p>
             {step > 1 && step < 4 && (
@@ -102,43 +123,78 @@ export default function NewClaim() {
               </Button>
             )}
           </div>
-          <div className="h-2 rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(step / 4) * 100}%` }} />
+          <div className="h-2 rounded-full bg-muted/50 backdrop-blur-sm overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-purple-600"
+              initial={{ width: 0 }}
+              animate={{ width: `${(step / 4) * 100}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            />
           </div>
-        </div>
+        </motion.div>
 
         {/* Step 1 */}
-        {step === 1 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-foreground">¿Cuál es tu situación?</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {claimTypes.map(ct => {
-                const Icon = iconMap[ct.icon];
-                const selected = selectedType === ct.value;
-                return (
-                  <button
-                    key={ct.value}
-                    onClick={() => setSelectedType(ct.value)}
-                    className={cn(
-                      'rounded-xl border p-6 text-left transition-all hover:shadow-sm',
-                      selected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'bg-card hover:border-primary/30'
-                    )}
-                  >
-                    <div className="flex items-start justify-between">
-                      <Icon className="h-10 w-10 text-primary mb-3" />
-                      {selected && <Check className="h-5 w-5 text-primary" />}
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-1">{ct.label}</h3>
-                    <p className="text-sm text-muted-foreground">{ct.description}</p>
-                  </button>
-                );
-              })}
-            </div>
-            <Button className="w-full" disabled={!selectedType} onClick={() => setStep(2)}>
-              Siguiente <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <h2 className="text-2xl font-bold text-foreground">¿Cuál es tu situación?</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {claimTypes.map((ct, index) => {
+                  const Icon = iconMap[ct.icon];
+                  const selected = selectedType === ct.value;
+                  return (
+                    <motion.div
+                      key={ct.value}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <GlassCard
+                        className={cn(
+                          'p-6 text-left cursor-pointer',
+                          selected && 'ring-2 ring-primary/50'
+                        )}
+                        glow={selected}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedType(ct.value)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <Icon className="h-10 w-10 text-primary mb-3" />
+                          {selected && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring" }}
+                            >
+                              <Check className="h-5 w-5 text-primary" />
+                            </motion.div>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-foreground mb-1">{ct.label}</h3>
+                        <p className="text-sm text-muted-foreground">{ct.description}</p>
+                      </GlassCard>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  className="w-full bg-gradient-to-r from-primary to-purple-600 hover:brightness-110 shadow-lg shadow-primary/30"
+                  disabled={!selectedType}
+                  onClick={() => setStep(2)}
+                >
+                  Siguiente <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
 
         {/* Step 2 */}
         {step === 2 && (
@@ -258,24 +314,56 @@ export default function NewClaim() {
         )}
 
         {/* Step 4 - Generating */}
-        {step === 4 && (
-          <div className="flex flex-col items-center justify-center py-20 space-y-8">
-            <Shield className="h-16 w-16 text-primary animate-pulse-slow" />
-            <div className="space-y-4 text-center">
-              {[
-                'Analizando tu situación...',
-                'Identificando tus derechos aplicables...',
-                'Redactando tu documento legal...',
-              ].map((msg, i) => (
-                <div key={i} className={cn('flex items-center gap-3 transition-opacity', genStep > i ? 'opacity-100' : genStep === i ? 'opacity-100' : 'opacity-30')}>
-                  {genStep > i + 1 ? <Check className="h-5 w-5 text-success" /> : genStep === i + 1 ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <div className="h-5 w-5" />}
-                  <p className="text-sm text-foreground">{msg}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center justify-center py-20 space-y-8"
+            >
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Shield className="h-16 w-16 text-primary" />
+              </motion.div>
+              <div className="space-y-4 text-center">
+                {[
+                  'Analizando tu situación...',
+                  'Identificando tus derechos aplicables...',
+                  'Redactando tu documento legal...',
+                ].map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: genStep >= i + 1 ? 1 : 0.3, x: 0 }}
+                    transition={{ delay: i * 0.3 }}
+                    className="flex items-center gap-3 justify-center"
+                  >
+                    {genStep > i + 1 ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring" }}
+                      >
+                        <Check className="h-5 w-5 text-success" />
+                      </motion.div>
+                    ) : genStep === i + 1 ? (
+                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                    ) : (
+                      <div className="h-5 w-5" />
+                    )}
+                    <p className="text-sm text-foreground">{msg}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       <ConfirmDialog
         open={exitConfirm}

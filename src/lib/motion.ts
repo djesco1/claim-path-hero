@@ -122,6 +122,9 @@ export const staggerContainerVariants: Variants = {
   },
 };
 
+// Alias for convenience
+export const staggerContainer = staggerContainerVariants;
+
 // Scale in variants
 export const scaleInVariants: Variants = {
   hidden: {

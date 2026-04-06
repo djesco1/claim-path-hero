@@ -14,8 +14,13 @@ import { getGreeting, formatRelativeDate, formatCurrency, getDaysUntilDeadline, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { AnimatedBackground } from '@/components/shared/AnimatedBackground';
+import { FloatingParticles } from '@/components/shared/FloatingParticles';
+import { GlassCard } from '@/components/shared/GlassCard';
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
+import { pageVariants, fadeInVariants, staggerContainer } from '@/lib/motion';
 
 const ACCENT_COLORS: Record<ClaimType, string> = {
   landlord_deposit: 'bg-blue-500',
@@ -25,31 +30,6 @@ const ACCENT_COLORS: Record<ClaimType, string> = {
   service_refund: 'bg-amber-500',
   other: 'bg-slate-400',
 };
-
-function AnimatedNumber({ value }: { value: number }) {
-  const [display, setDisplay] = useState(0);
-  const ref = useRef<number>(0);
-
-  useEffect(() => {
-    const start = ref.current;
-    const diff = value - start;
-    const duration = 600;
-    const startTime = performance.now();
-
-    const animate = (time: number) => {
-      const elapsed = time - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(start + diff * eased);
-      setDisplay(current);
-      ref.current = current;
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [value]);
-
-  return <>{display}</>;
-}
 
 export default function Dashboard() {
   const { profile } = useAuth();
@@ -101,45 +81,70 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
+      <AnimatedBackground />
+      <FloatingParticles count={15} />
+      
+      <motion.div
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6 relative z-10"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <motion.div
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex items-center justify-between"
+        >
           <div>
             <h1 className="text-2xl font-bold text-foreground">{getGreeting()}, {firstName}</h1>
             <p className="text-sm text-muted-foreground">Gestiona tus reclamaciones legales</p>
           </div>
-          <Button asChild><Link to="/claims/new"><Plus className="h-4 w-4 mr-2" />Nueva Reclamación</Link></Button>
-        </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button asChild className="bg-gradient-to-r from-primary to-purple-600 hover:brightness-110 shadow-lg shadow-primary/30">
+              <Link to="/claims/new"><Plus className="h-4 w-4 mr-2" />Nueva Reclamación</Link>
+            </Button>
+          </motion.div>
+        </motion.div>
 
         {/* Stats with animated numbers */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-xl border bg-gradient-to-br from-card to-primary/[0.02] p-4">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          <GlassCard className="p-4" glow>
             <p className="text-sm text-muted-foreground">Total</p>
             <p className="text-2xl font-bold text-foreground"><AnimatedNumber value={totalClaims} /></p>
-          </div>
-          <div className="rounded-xl border bg-gradient-to-br from-card to-blue-500/[0.03] p-4">
+          </GlassCard>
+          <GlassCard className="p-4" glow>
             <p className="text-sm text-muted-foreground">Activas</p>
             <p className="text-2xl font-bold text-primary"><AnimatedNumber value={activeClaims} /></p>
-          </div>
-          <div className="rounded-xl border bg-gradient-to-br from-card to-emerald-500/[0.03] p-4">
+          </GlassCard>
+          <GlassCard className="p-4" glow>
             <p className="text-sm text-muted-foreground">Resueltas</p>
             <p className="text-2xl font-bold text-success"><AnimatedNumber value={resolvedClaims} /></p>
-          </div>
-          <div className="rounded-xl border bg-card p-4">
+          </GlassCard>
+          <GlassCard className="p-4">
             <p className="text-sm text-muted-foreground">Plan</p>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-foreground capitalize">{profile?.plan || 'free'}</span>
               {profile?.plan === 'free' && <Link to="/pricing" className="text-xs text-primary hover:underline">Actualizar</Link>}
             </div>
-          </div>
-        </div>
+          </GlassCard>
+        </motion.div>
 
         {/* Filters */}
-        <Tabs value={statusFilter || 'all'} onValueChange={v => setStatusFilter(v === 'all' ? null : v as ClaimStatus)}>
-          <TabsList className="w-full justify-start overflow-x-auto">
-            {tabs.map(t => <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>)}
-          </TabsList>
-        </Tabs>
+        <GlassCard className="p-1">
+          <Tabs value={statusFilter || 'all'} onValueChange={v => setStatusFilter(v === 'all' ? null : v as ClaimStatus)}>
+            <TabsList className="w-full justify-start overflow-x-auto bg-transparent">
+              {tabs.map(t => <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>)}
+            </TabsList>
+          </Tabs>
+        </GlassCard>
 
         {/* Claims List */}
         {isLoading ? (
@@ -151,17 +156,21 @@ export default function Dashboard() {
             action={<Button asChild><Link to="/claims/new">Crear mi primera reclamación</Link></Button>}
           />
         ) : (
-          <div className="space-y-3">
-            {claims.map((claim: Claim, index: number) => {
+          <AnimatePresence mode="popLayout">
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-3">
+              {claims.map((claim: Claim, index: number) => {
               const daysLeft = claim.deadline_date ? getDaysUntilDeadline(claim.deadline_date) : null;
               const accentColor = ACCENT_COLORS[claim.claim_type] || 'bg-slate-400';
               return (
-                <motion.div
+                <GlassCard
                   key={claim.id}
+                  className="overflow-hidden cursor-pointer group flex"
+                  glow
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
-                  className="rounded-xl border bg-card overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer group flex"
+                  whileHover={{ y: -2, scale: 1.01 }}
                   onClick={() => navigate(`/claims/${claim.id}`)}
                 >
                   {/* Accent bar */}
@@ -198,12 +207,13 @@ export default function Dashboard() {
                       </DropdownMenu>
                     </div>
                   </div>
-                </motion.div>
+                </GlassCard>
               );
             })}
-          </div>
+            </motion.div>
+          </AnimatePresence>
         )}
-      </div>
+      </motion.div>
 
       <ConfirmDialog
         open={!!deleteId}

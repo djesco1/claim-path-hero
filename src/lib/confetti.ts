@@ -51,3 +51,6 @@ export function fireSuccessConfetti() {
     });
   }, 250);
 }
+
+// Alias for convenience
+export const triggerConfetti = fireSuccessConfetti;

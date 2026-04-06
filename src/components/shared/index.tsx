@@ -216,3 +216,8 @@ export function DocumentSkeleton() {
 export { Card3D } from './Card3D';
 export { AnimatedNumber } from './AnimatedNumber';
 export { TypingText } from './TypingText';
+export { AnimatedBackground } from './AnimatedBackground';
+export { FloatingParticles } from './FloatingParticles';
+export { LegalOwl } from './LegalOwl';
+export { GlassCard } from './GlassCard';
+export { PremiumButton } from './PremiumButton';

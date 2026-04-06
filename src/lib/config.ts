@@ -1,3 +1,10 @@
+// Feature flags para la aplicación
 export const FEATURES = {
-  GOOGLE_OAUTH: import.meta.env.VITE_GOOGLE_OAUTH_ENABLED === 'true',
-};
+  // Google OAuth - Cambiar a true después de configurar en Supabase
+  GOOGLE_OAUTH: false,
+  
+  // Otras features
+  VOICE_INPUT: true,
+  DOCUMENT_SCANNER: true,
+  AI_ASSISTANT: true,
+} as const;

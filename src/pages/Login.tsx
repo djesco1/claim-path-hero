@@ -1,25 +1,20 @@
-/* GOOGLE OAUTH SETUP REQUIRED:
-   1. Go to console.cloud.google.com
-   2. Create OAuth 2.0 credentials
-   3. Add authorized redirect URI:
-      https://YOUR_SUPABASE_PROJECT.supabase.co/auth/v1/callback
-   4. In Supabase: Authentication → Providers → Google → paste credentials
-   5. Set VITE_GOOGLE_OAUTH_ENABLED=true in .env
-*/
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Shield, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Shield, Loader2, Eye, EyeOff, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { loginSchema, LoginInput } from '@/schemas';
-import { FEATURES } from '@/lib/config';
 import { toast } from 'sonner';
-import { pageVariants, fadeInVariants, slideUpVariants } from '@/lib/motion';
+import { pageVariants, fadeInVariants } from '@/lib/motion';
+import { AnimatedBackground } from '@/components/shared/AnimatedBackground';
+import { FloatingParticles } from '@/components/shared/FloatingParticles';
+import { GlassCard } from '@/components/shared/GlassCard';
+import { FEATURES } from '@/lib/config';
 
 export default function Login() {
   const { signIn, signInWithGoogle } = useAuth();
@@ -47,7 +42,7 @@ export default function Login() {
     } catch (error: any) {
       const msg = error?.message || '';
       if (msg.includes('provider is not enabled') || error?.code === 'validation_failed') {
-        toast.error('El inicio de sesión con Google no está disponible en este momento. Usa tu correo y contraseña.');
+        toast.error('El inicio de sesión con Google no está disponible. Usa tu correo y contraseña.');
       } else {
         toast.error('Error al iniciar sesión con Google');
       }
@@ -60,87 +55,135 @@ export default function Login() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="flex min-h-screen items-center justify-center bg-background p-4"
+      className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden"
     >
-      <div className="w-full max-w-md space-y-8">
+      {/* Fondo animado */}
+      <AnimatedBackground />
+      <FloatingParticles count={20} />
+
+      <div className="w-full max-w-md space-y-8 relative z-10">
         <motion.div variants={fadeInVariants} initial="hidden" animate="visible" className="text-center">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">ClaimPath</span>
+          <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
+            <motion.div
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Shield className="h-8 w-8 text-primary" />
+            </motion.div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              ClaimPath
+            </span>
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">Bienvenido de nuevo</h1>
+          <motion.h1 
+            className="text-2xl font-bold text-foreground flex items-center justify-center gap-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Bienvenido de nuevo
+            <Sparkles className="h-5 w-5 text-primary" />
+          </motion.h1>
         </motion.div>
 
-        <motion.div
-          variants={slideUpVariants}
-          initial="hidden"
-          animate="visible"
-          className="rounded-xl border bg-card p-6 shadow-sm"
+        <GlassCard
+          className="p-6 shadow-2xl"
+          glow
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
         >
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" type="email" placeholder="tu@email.com" {...register('email')} aria-describedby={errors.email ? 'email-error' : undefined} />
+              <Label htmlFor="email" className="text-foreground font-medium">Correo electrónico</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="tu@email.com" 
+                {...register('email')} 
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                className="bg-white/50 backdrop-blur-sm border-white/20 focus:border-primary/50 transition-all"
+              />
               {errors.email && <p id="email-error" className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password" className="text-foreground font-medium">Contraseña</Label>
               <div className="relative">
-                <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...register('password')} />
-                <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
+                <Input 
+                  id="password" 
+                  type={showPassword ? 'text' : 'password'} 
+                  placeholder="••••••••" 
+                  {...register('password')}
+                  className="bg-white/50 backdrop-blur-sm border-white/20 focus:border-primary/50 transition-all pr-10"
+                />
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute right-0 top-0 h-full px-3 hover:bg-white/10" 
+                  onClick={() => setShowPassword(!showPassword)} 
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
 
-            <Link to="/forgot-password" className="block text-sm text-primary hover:underline">Olvidé mi contraseña</Link>
+            <Link to="/forgot-password" className="block text-sm text-primary hover:underline">
+              Olvidé mi contraseña
+            </Link>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              Iniciar sesión
-            </Button>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-primary to-purple-600 hover:brightness-110 shadow-lg shadow-primary/30" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                Iniciar sesión
+              </Button>
+            </motion.div>
           </form>
 
+          {/* Google OAuth - Solo mostrar si está habilitado */}
           {FEATURES.GOOGLE_OAUTH && (
             <>
               <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">o continúa con</span></div>
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-white/20" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card/50 backdrop-blur-sm px-2 text-muted-foreground">o continúa con</span>
+                </div>
               </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full" 
-            type="button"
-            onClick={async () => {
-              try {
-                await signInWithGoogle();
-              } catch (error: any) {
-                console.error('Google sign in error:', error);
-                if (error.message?.includes('provider') || error.message?.includes('not enabled')) {
-                  toast.error('El inicio de sesión con Google no está disponible. Por favor, usa correo y contraseña.');
-                } else {
-                  toast.error('Error al iniciar sesión con Google');
-                }
-              }
-            }}
-          >
-            <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4F46E5"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Continuar con Google
-          </Button>
-              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-                <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                Continuar con Google
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  variant="outline"
+                  className="w-full bg-white/50 backdrop-blur-sm border-white/20 hover:bg-white/70"
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                >
+                  <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  Continuar con Google
+                </Button>
+              </motion.div>
             </>
           )}
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            ¿No tienes cuenta? <Link to="/register" className="text-primary hover:underline font-medium">Regístrate</Link>
+            ¿No tienes cuenta?{' '}
+            <Link to="/register" className="text-primary hover:underline font-medium">
+              Regístrate
+            </Link>
           </p>
-        </motion.div>
+        </GlassCard>
       </div>
     </motion.div>
   );

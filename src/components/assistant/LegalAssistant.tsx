@@ -8,6 +8,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { GlassCard } from '@/components/shared/GlassCard';
+import { LegalOwl } from '@/components/shared/LegalOwl';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -166,38 +168,47 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
       {/* Floating button */}
       <AnimatePresence>
         {!open && (
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            onClick={() => setOpen(true)}
-            className="fixed right-6 bottom-6 z-50 h-14 w-14 rounded-full bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow lg:bottom-6 bottom-20"
-          >
-            <Sparkles className="h-6 w-6" />
-            <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
-          </motion.button>
+          <>
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              onClick={() => setOpen(true)}
+              className="fixed right-6 bottom-6 z-50 h-14 w-14 rounded-full bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow lg:bottom-6 bottom-20"
+            >
+              <Sparkles className="h-6 w-6" />
+              <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+            </motion.button>
+            <LegalOwl />
+          </>
         )}
       </AnimatePresence>
 
       {/* Chat panel */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <GlassCard
             initial={{ opacity: 0, y: 100, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={cn(
-              'fixed z-50 bg-card border rounded-2xl shadow-2xl flex flex-col overflow-hidden',
+              'fixed z-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden',
               'right-6 bottom-6 w-[400px] h-[600px]',
               'max-lg:inset-0 max-lg:w-full max-lg:h-full max-lg:rounded-none max-lg:right-0 max-lg:bottom-0'
             )}
+            glow
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-primary/5 to-transparent">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-primary/5 to-transparent backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground text-sm">Asistente Legal</span>
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  <Shield className="h-5 w-5 text-primary" />
+                </motion.div>
+                <span className="font-semibold text-foreground text-sm">Justi - Asistente Legal</span>
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0">IA</Badge>
               </div>
               <div className="flex items-center gap-1">
@@ -233,7 +244,12 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div className="rounded-2xl bg-primary/10 p-4">
-                    <MessageSquare className="h-8 w-8 text-primary" />
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <MessageSquare className="h-8 w-8 text-primary" />
+                    </motion.div>
                   </div>
                   <div>
                     <p className="font-medium text-foreground text-sm">¿En qué puedo ayudarte?</p>
@@ -261,16 +277,24 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
                   className={cn('flex gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1"
+                    >
                       <Shield className="h-3.5 w-3.5 text-primary" />
-                    </div>
+                    </motion.div>
                   )}
-                  <div className={cn(
-                    'rounded-xl px-3.5 py-2.5 text-sm max-w-[85%]',
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted border'
-                  )}>
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={cn(
+                      'rounded-xl px-3.5 py-2.5 text-sm max-w-[85%]',
+                      msg.role === 'user'
+                        ? 'bg-gradient-to-br from-primary to-purple-600 text-primary-foreground shadow-lg shadow-primary/20'
+                        : 'bg-white/50 dark:bg-muted/50 backdrop-blur-sm border border-white/20'
+                    )}
+                  >
                     {msg.role === 'assistant' ? (
                       <div className="prose prose-sm max-w-none dark:prose-invert [&_p]:mb-2 [&_p:last-child]:mb-0">
                         <ReactMarkdown>{renderCitations(msg.content)}</ReactMarkdown>
@@ -281,11 +305,15 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
                     ) : (
                       msg.content
                     )}
-                  </div>
+                  </motion.div>
                   {msg.role === 'user' && (
-                    <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center shrink-0 mt-1 text-[10px] font-medium text-primary-foreground">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shrink-0 mt-1 text-[10px] font-medium text-primary-foreground shadow-lg"
+                    >
                       {initials}
-                    </div>
+                    </motion.div>
                   )}
                 </motion.div>
               ))}
@@ -308,7 +336,7 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
             </div>
 
             {/* Input */}
-            <div className="p-3 border-t bg-card">
+            <div className="p-3 border-t bg-card/50 backdrop-blur-sm">
               <div className="flex gap-2 items-end">
                 <Textarea
                   ref={textareaRef}
@@ -316,21 +344,23 @@ export default function LegalAssistant({ claimId, claimTitle }: { claimId?: stri
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Escribe tu pregunta..."
-                  className="min-h-[40px] max-h-[100px] resize-none text-sm"
+                  className="min-h-[40px] max-h-[100px] resize-none text-sm bg-white/50 dark:bg-muted/50 backdrop-blur-sm border-white/20"
                   rows={1}
                   disabled={streaming}
                 />
-                <Button
-                  size="icon"
-                  className="shrink-0 h-10 w-10"
-                  onClick={() => sendMessage(input)}
-                  disabled={!input.trim() || streaming}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    size="icon"
+                    className="shrink-0 h-10 w-10 bg-gradient-to-br from-primary to-purple-600 shadow-lg shadow-primary/30"
+                    onClick={() => sendMessage(input)}
+                    disabled={!input.trim() || streaming}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </motion.div>
               </div>
             </div>
-          </motion.div>
+          </GlassCard>
         )}
       </AnimatePresence>
     </>
