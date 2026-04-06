@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState, useEffect, Component, ReactNode } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
+import { badgeVariants } from '@/lib/motion';
 
 const claimTypeIcons: Record<ClaimType, typeof Home> = {
   landlord_deposit: Home,
@@ -19,7 +21,25 @@ const claimTypeIcons: Record<ClaimType, typeof Home> = {
 
 export function StatusBadge({ status }: { status: ClaimStatus }) {
   const config = statusConfig[status];
-  return <span className={cn('inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium', config.color)}>{config.label}</span>;
+  
+  // Determine animation variant based on status
+  const getVariant = () => {
+    if (status === 'resolved') return badgeVariants.success;
+    if (status === 'draft') return badgeVariants.info;
+    if (status === 'sent') return badgeVariants.warning;
+    return badgeVariants.info;
+  };
+
+  return (
+    <motion.span
+      variants={getVariant()}
+      initial="hidden"
+      animate="visible"
+      className={cn('inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium', config.color)}
+    >
+      {config.label}
+    </motion.span>
+  );
 }
 
 export function ClaimTypeBadge({ type }: { type: ClaimType }) {
@@ -44,14 +64,24 @@ export function EmptyState({ icon: Icon = FileText, title, description, action }
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="rounded-2xl bg-muted p-4 mb-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex flex-col items-center justify-center py-16 text-center"
+    >
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+        className="rounded-2xl bg-muted p-4 mb-4"
+      >
         <Icon className="h-10 w-10 text-muted-foreground" />
-      </div>
+      </motion.div>
       <h3 className="text-lg font-semibold text-foreground mb-1">{title}</h3>
       <p className="text-sm text-muted-foreground max-w-sm mb-6">{description}</p>
       {action}
-    </div>
+    </motion.div>
   );
 }
 
@@ -123,10 +153,15 @@ export function OfflineBanner() {
   if (!offline) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-warning px-4 py-2 text-center text-sm font-medium text-warning-foreground">
+    <motion.div
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      exit={{ y: -100 }}
+      className="fixed top-0 left-0 right-0 z-[100] bg-warning px-4 py-2 text-center text-sm font-medium text-warning-foreground"
+    >
       <WifiOff className="inline h-4 w-4 mr-2" />
       Sin conexión a internet. Algunas funciones pueden no estar disponibles.
-    </div>
+    </motion.div>
   );
 }
 
@@ -176,3 +211,8 @@ export function DocumentSkeleton() {
     </div>
   );
 }
+
+// Export new components
+export { Card3D } from './Card3D';
+export { AnimatedNumber } from './AnimatedNumber';
+export { TypingText } from './TypingText';
