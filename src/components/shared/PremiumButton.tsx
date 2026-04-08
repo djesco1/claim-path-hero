@@ -71,7 +71,7 @@ export const PremiumButton = forwardRef<HTMLButtonElement, PremiumButtonProps>((
         whileTap: { scale: 0.98 },
       })}
       onClick={handleClick}
-      {...props}
+      {...(props as any)}
     >
       {/* Shine effect */}
       <motion.div
