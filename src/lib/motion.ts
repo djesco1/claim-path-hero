@@ -168,9 +168,9 @@ export const badgeVariants = {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 500, damping: 25 },
+      transition: { type: 'spring' as const, stiffness: 500, damping: 25 },
     },
-  },
+  } satisfies Variants,
   error: {
     hidden: { opacity: 0, x: -5 },
     visible: {
@@ -178,7 +178,7 @@ export const badgeVariants = {
       x: [0, -3, 3, -3, 0],
       transition: { duration: 0.4 },
     },
-  },
+  } satisfies Variants,
   warning: {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
@@ -186,7 +186,7 @@ export const badgeVariants = {
       scale: [1, 1.05, 1],
       transition: { duration: 0.3 },
     },
-  },
+  } satisfies Variants,
   info: {
     hidden: { opacity: 0, y: 10 },
     visible: {
@@ -194,7 +194,7 @@ export const badgeVariants = {
       y: 0,
       transition: springConfig,
     },
-  },
+  } satisfies Variants,
 };
 
 // Intersection observer animation
