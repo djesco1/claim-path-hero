@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom';
 import { Shield, Check, X, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/layout';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AnimatedBackground } from '@/components/shared/AnimatedBackground';
 import { FloatingParticles } from '@/components/shared/FloatingParticles';
 import { GlassCard } from '@/components/shared/GlassCard';
 import { pageVariants, fadeInVariants, staggerContainer } from '@/lib/motion';
+import PaymentGateway from '@/components/payment/PaymentGateway';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const freeFeatures = ['2 reclamaciones', 'Todos los tipos de reclamación', 'Generación de documento legal', 'Descarga en PDF', 'Instrucciones de envío'];
 const freeDisabled = ['Recordatorios automáticos', 'Soporte prioritario', 'Reclamaciones ilimitadas'];
@@ -20,6 +26,25 @@ const faqs = [
 ];
 
 export default function Pricing() {
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleUpgrade = () => {
+    if (!user) {
+      toast.info('Debes iniciar sesión primero');
+      navigate('/login');
+      return;
+    }
+    setPaymentOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setPaymentOpen(false);
+    toast.success('¡Bienvenido al plan Pro!');
+    navigate('/dashboard');
+  };
+
   return (
     <motion.div
       variants={pageVariants}
@@ -81,7 +106,9 @@ export default function Pricing() {
               {proFeatures.map(f => <li key={f} className="flex items-center gap-2 text-sm text-foreground"><Check className="h-4 w-4 text-success shrink-0" />{f}</li>)}
             </ul>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button className="w-full bg-gradient-to-r from-primary to-purple-600 hover:brightness-110 shadow-lg shadow-primary/30">Próximamente — Empezar con Pro</Button>
+              <Button className="w-full bg-gradient-to-r from-primary to-purple-600 hover:brightness-110 shadow-lg shadow-primary/30" onClick={handleUpgrade}>
+                Empezar con Pro
+              </Button>
             </motion.div>
           </GlassCard>
         </motion.div>
@@ -107,6 +134,21 @@ export default function Pricing() {
           </GlassCard>
         </div>
       </div>
+
+      {/* Payment Dialog */}
+      <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Actualizar a Pro</DialogTitle>
+          </DialogHeader>
+          <PaymentGateway
+            amount={12000}
+            planName="Pro"
+            onSuccess={handlePaymentSuccess}
+            onCancel={() => setPaymentOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

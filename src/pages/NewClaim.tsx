@@ -196,12 +196,18 @@ export default function NewClaim() {
             </motion.div>
           )}
 
-        {/* Step 2 */}
-        {step === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-foreground">Cuéntanos qué pasó</h2>
-            <div className="grid lg:grid-cols-3 gap-6">
-              <form onSubmit={handleSubmit(handleStep2Submit)} className="lg:col-span-2 space-y-4">
+          {/* Step 2 */}
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <h2 className="text-2xl font-bold text-foreground">Cuéntanos qué pasó</h2>
+              <div className="grid lg:grid-cols-3 gap-6">
+                <form onSubmit={handleSubmit(handleStep2Submit)} className="lg:col-span-2 space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="situation">Describe tu situación con el mayor detalle posible</Label>
@@ -269,12 +275,18 @@ export default function NewClaim() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 3 - Review */}
         {step === 3 && (
-          <div className="space-y-6">
+          <motion.div
+            key="step3"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
             <h2 className="text-2xl font-bold text-foreground">Revisa tu información</h2>
             <div className="rounded-xl border bg-card p-6 space-y-4">
               <div className="flex items-center justify-between">
@@ -310,7 +322,7 @@ export default function NewClaim() {
                 Generar documento
               </Button>
             )}
-          </div>
+          </motion.div>
         )}
 
         {/* Step 4 - Generating */}

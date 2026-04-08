@@ -1,5 +1,5 @@
   import { Link } from 'react-router-dom';
-import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, ArrowRight } from 'lucide-react';
+import { Shield, MessageSquare, ShieldCheck, Send, Home, Briefcase, Umbrella, Landmark, Building, MoreHorizontal, Star, Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/layout';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -11,6 +11,7 @@ import { GlassCard } from '@/components/shared/GlassCard';
 import { PremiumButton } from '@/components/shared/PremiumButton';
 import { useTypewriter } from '@/hooks/useTypewriter';
 import { pageVariants } from '@/lib/motion';
+import RAGDemo from '@/components/demo/RAGDemo';
 
 const steps = [
   { icon: MessageSquare, title: 'Describe tu situación', desc: 'Cuéntanos qué pasó con tus propias palabras. No necesitas conocer términos legales.' },
@@ -351,6 +352,30 @@ export default function Landing() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* RAG Demo Section */}
+      <section className="container py-20">
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring' }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4"
+          >
+            <Sparkles className="h-4 w-4" />
+            Prueba nuestro asistente legal con IA
+          </motion.div>
+          <h2 className="text-3xl font-bold text-foreground mb-4">
+            Pregunta sobre tus derechos
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Nuestro asistente legal usa inteligencia artificial para responder tus preguntas
+            basándose en la legislación colombiana vigente
+          </p>
+        </div>
+        <RAGDemo />
       </section>
 
       {/* Pricing */}
